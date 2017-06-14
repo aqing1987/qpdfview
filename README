@@ -32,3 +32,14 @@ The following build-time options are available:
 For example, if one wants to build the program without support for CUPS and PostScript, one could run "qmake CONFIG+="without_cups without_ps" qpdfview.pro" instead of "qmake qpdfview.pro".
 
 The fallback and application-specific icons are derived from the Tango icon theme available at "http://tango.freedesktop.org".
+
+qpdfview.pro is the ENTRANCE
+
+
+# prepare for compiling
+sudo apt-get install libcups2-dev
+sudo apt install libmagic-dev
+sudo apt install libspectre-dev
+sudo apt install libdjvulibre-dev
+sudo apt install libmupdf-dev
+sudo apt install libpoppler-qt5-dev
