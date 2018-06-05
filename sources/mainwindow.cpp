@@ -84,11 +84,9 @@ along with qpdfview.  If not, see <http://www.gnu.org/licenses/>.
 #include "database.h"
 
 
-namespace qpdfview
-{
+namespace qpdfview {
 
-namespace
-{
+namespace {
 
 QModelIndex synchronizeOutlineView(int currentPage, const QAbstractItemModel* model, const QModelIndex& parent)
 {
@@ -2834,17 +2832,14 @@ void MainWindow::closeTab(DocumentView* tab)
     }
 }
 
-void MainWindow::setWindowTitleForCurrentTab()
-{
+void MainWindow::setWindowTitleForCurrentTab() {
     QString tabText;
     QString instanceText;
 
-    if(DocumentView* tab = currentTab())
-    {
+    if (DocumentView* tab = currentTab()) {
         QString currentPage;
 
-        if(s_settings->mainWindow().currentPageInWindowTitle())
-        {
+        if(s_settings->mainWindow().currentPageInWindowTitle()) {
             currentPage = QString(" (%1 / %2)").arg(tab->currentPage()).arg(tab->numberOfPages());
         }
 
@@ -2853,12 +2848,11 @@ void MainWindow::setWindowTitleForCurrentTab()
 
     const QString instanceName = qApp->objectName();
 
-    if(s_settings->mainWindow().instanceNameInWindowTitle() && !instanceName.isEmpty())
-    {
+    if(s_settings->mainWindow().instanceNameInWindowTitle() && !instanceName.isEmpty()) {
         instanceText = QLatin1String(" (") + instanceName + QLatin1String(")");
     }
 
-    setWindowTitle(tabText + QLatin1String("qpdfview") + instanceText);
+    setWindowTitle(tabText + QLatin1String("sqpdfview") + instanceText);
 }
 
 void MainWindow::setCurrentPageSuffixForCurrentTab()
@@ -3176,7 +3170,11 @@ void MainWindow::createActions()
     m_previousTabAction = createAction(tr("&Previous tab"), QLatin1String("previousTab"), QIcon(), QKeySequence::PreviousChild, SLOT(on_previousTab_triggered()));
     m_nextTabAction = createAction(tr("&Next tab"), QLatin1String("nextTab"), QIcon(), QKeySequence::NextChild, SLOT(on_nextTab_triggered()));
 
-    m_closeTabAction = createAction(tr("&Close tab"), QLatin1String("closeTab"), QIcon::fromTheme("window-close"), QKeySequence(Qt::CTRL + Qt::Key_W), SLOT(on_closeTab_triggered()));
+    m_closeTabAction = createAction(tr("&Close tab"),
+                                    QLatin1String("closeTab"),
+                                    QIcon::fromTheme("window-close"),
+                                    QKeySequence(Qt::CTRL + Qt::Key_W),
+                                    SLOT(on_closeTab_triggered()));
     m_closeAllTabsAction = createAction(tr("Close &all tabs"), QLatin1String("closeAllTabs"), QIcon(), QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_W), SLOT(on_closeAllTabs_triggered()));
     m_closeAllTabsButCurrentTabAction = createAction(tr("Close all tabs &but current tab"), QLatin1String("closeAllTabsButCurrent"), QIcon(), QKeySequence(Qt::CTRL + Qt::ALT + Qt::Key_W), SLOT(on_closeAllTabsButCurrentTab_triggered()));
 

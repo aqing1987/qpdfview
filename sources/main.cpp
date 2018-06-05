@@ -65,13 +65,11 @@ const char* __attribute__((used)) stack_cookie = "\0$STACK:500000\0";
 
 #endif // __amigaos4__
 
-namespace
-{
+namespace {
 
 using namespace qpdfview;
 
-struct File
-{
+struct File {
     QString filePath;
     int page;
 
@@ -84,8 +82,7 @@ struct File
 
 };
 
-enum ExitStatus
-{
+enum ExitStatus {
     ExitOk = 0,
     ExitUnknownArgument = 1,
     ExitIllegalArgument = 2,
@@ -435,8 +432,7 @@ void prepareSignalHandler()
 
 } // anonymous
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
     qRegisterMetaType< QList< QRectF > >("QList<QRectF>");
     qRegisterMetaType< Rotation >("Rotation");
     qRegisterMetaType< RenderParam >("RenderParam");
@@ -446,8 +442,8 @@ int main(int argc, char** argv)
     QApplication application(argc, argv);
 
     QApplication::setOrganizationDomain("local.qpdfview");
-    QApplication::setOrganizationName("qpdfview");
-    QApplication::setApplicationName("qpdfview");
+    QApplication::setOrganizationName("orange");
+    QApplication::setApplicationName("sqpdfview");
 
     QApplication::setApplicationVersion(APPLICATION_VERSION);
 
@@ -466,18 +462,15 @@ int main(int argc, char** argv)
     mainWindow->show();
     mainWindow->setAttribute(Qt::WA_DeleteOnClose);
 
-    foreach(const File& file, files)
-    {
+    foreach(const File& file, files) {
         mainWindow->jumpToPageOrOpenInNewTab(file.filePath, file.page, true, file.enclosingBox, quiet);
     }
 
-    if(!files.isEmpty())
-    {
+    if (!files.isEmpty()) {
         mainWindow->saveDatabase();
     }
 
-    if(!searchText.isEmpty())
-    {
+    if(!searchText.isEmpty()) {
         mainWindow->startSearch(searchText);
     }
 
