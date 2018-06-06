@@ -26,11 +26,9 @@ along with qpdfview.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "global.h"
 
-namespace qpdfview
-{
+namespace qpdfview {
 
-enum RenderFlag
-{
+enum RenderFlag {
     InvertColors = 1 << 0,
     ConvertToGrayscale = 1 << 1,
     TrimMargins = 1 << 2,
@@ -40,8 +38,7 @@ enum RenderFlag
 
 Q_DECLARE_FLAGS(RenderFlags, RenderFlag)
 
-class RenderParam
-{
+class RenderParam {
 public:
     RenderParam(int resolutionX = 72, int resolutionY = 72, qreal devicePixelRatio = 1.0,
                 qreal scaleFactor = 1.0, Rotation rotation = RotateBy0,
@@ -57,8 +54,7 @@ public:
 
     int resolutionX() const { return d->resolutionX; }
     int resolutionY() const { return d->resolutionY; }
-    void setResolution(int resolutionX, int resolutionY)
-    {
+    void setResolution(int resolutionX, int resolutionY) {
         d->resolutionX = resolutionX;
         d->resolutionY = resolutionY;
     }
@@ -74,14 +70,10 @@ public:
 
     RenderFlags flags() const { return d->flags; }
     void setFlags(RenderFlags flags) { d->flags = flags; }
-    void setFlag(RenderFlag flag, bool enabled = true)
-    {
-        if(enabled)
-        {
+    void setFlag(RenderFlag flag, bool enabled = true) {
+        if (enabled) {
             d->flags |= flag;
-        }
-        else
-        {
+        } else {
             d->flags &= ~flag;
         }
     }
@@ -103,12 +95,9 @@ public:
 
     bool operator==(const RenderParam& other) const
     {
-        if(d == other.d)
-        {
+        if(d == other.d) {
             return true;
-        }
-        else
-        {
+        } else {
             return d->resolutionX == other.d->resolutionX
                     && d->resolutionY == other.d->resolutionY
                     && qFuzzyCompare(d->devicePixelRatio, other.d->devicePixelRatio)
@@ -121,8 +110,7 @@ public:
     bool operator!=(const RenderParam& other) const { return !operator==(other); }
 
 private:
-    struct SharedData : public QSharedData
-    {
+    struct SharedData : public QSharedData {
         int resolutionX;
         int resolutionY;
         qreal devicePixelRatio;
@@ -131,11 +119,9 @@ private:
         Rotation rotation;
 
         RenderFlags flags;
-
     };
 
     QSharedDataPointer< SharedData > d;
-
 };
 
 inline QDataStream& operator<<(QDataStream& stream, const RenderParam& that)

@@ -267,23 +267,19 @@ void parseCommandLineArguments()
     }
 }
 
-void parseWorkbenchExtendedSelection(int argc, char** argv)
-{
+void parseWorkbenchExtendedSelection(int argc, char** argv) {
 #ifdef __amigaos4__
 
-    if(argc == 0)
-    {
+    if (argc == 0) {
         const int pathLength = 1024;
         const QScopedArrayPointer< char > filePath(new char[pathLength]);
 
         const struct WBStartup* wbStartup = reinterpret_cast< struct WBStartup* >(argv);
 
-        for(int index = 1; index < wbStartup->sm_NumArgs; ++index)
-        {
+        for(int index = 1; index < wbStartup->sm_NumArgs; ++index) {
             const struct WBArg* wbArg = wbStartup->sm_ArgList + index;
 
-            if((wbArg->wa_Lock) && (*wbArg->wa_Name))
-            {
+            if((wbArg->wa_Lock) && (*wbArg->wa_Name)) {
                 IDOS->DevNameFromLock(wbArg->wa_Lock, filePath.data(), pathLength, DN_FULLPATH);
                 IDOS->AddPart(filePath.data(), wbArg->wa_Name, pathLength);
 
@@ -297,6 +293,8 @@ void parseWorkbenchExtendedSelection(int argc, char** argv)
 
 #else
 
+    // Indicates to the compiler that the parameter with the specified name is not used in the body of a function.
+    // This can be used to suppress compiler warnings while allowing functions to be defined with meaningful parameter names in their signatures.
     Q_UNUSED(argc);
     Q_UNUSED(argv);
 

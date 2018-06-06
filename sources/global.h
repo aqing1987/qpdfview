@@ -26,11 +26,9 @@ along with qpdfview.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtGlobal>
 #include <qnumeric.h>
 
-namespace qpdfview
-{
+namespace qpdfview {
 
-enum Rotation
-{
+enum Rotation {
     RotateBy0 = 0,
     RotateBy90 = 1,
     RotateBy180 = 2,
@@ -38,8 +36,7 @@ enum Rotation
     NumberOfRotations = 4
 };
 
-enum RubberBandMode
-{
+enum RubberBandMode {
     ModifiersMode = 0,
     CopyToClipboardMode = 1,
     AddAnnotationMode = 2,
@@ -47,8 +44,7 @@ enum RubberBandMode
     NumberOfRubberBandModes = 4
 };
 
-enum LayoutMode
-{
+enum LayoutMode {
     SinglePageMode = 0,
     TwoPagesMode = 1,
     TwoPagesWithCoverPageMode = 2,
@@ -56,16 +52,14 @@ enum LayoutMode
     NumberOfLayoutModes = 4
 };
 
-enum ScaleMode
-{
+enum ScaleMode {
     ScaleFactorMode = 0,
     FitToPageWidthMode = 1,
     FitToPageSizeMode = 2,
     NumberOfScaleModes = 3
 };
 
-enum CompositionMode
-{
+enum CompositionMode {
     DefaultCompositionMode = 0,
     DarkenWithPaperColorMode = 1,
     LightenWithPaperColorMode = 2,

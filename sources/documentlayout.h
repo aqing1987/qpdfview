@@ -28,6 +28,8 @@ along with qpdfview.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "global.h"
 
+// The QRectF class defines a rectangle in the plane using floating point
+// precision.
 class QRectF;
 
 namespace qpdfview
