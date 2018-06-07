@@ -100,17 +100,32 @@ QList< File > files;
 
 MainWindow* mainWindow = 0;
 
-void loadTranslators()
-{
+void loadTranslators() {
+    // The QTranslator class provides internationalization support for text output.
+    // The most common use of QTranslator is to: load a translation file, install
+    // it using QCoreApplication::installTranslator(), and use it via QObject::tr().
+    // Note that the translator must be created before the application's widgets.
+
+    // A global pointer referring to the unique application object. It is equivalent
+    // to the pointer returned by the QCoreApplication::instance() function except that,
+    // in GUI applications, it is a pointer to a QApplication instance.
+    // Only one application object can be created.
     QTranslator* toolkitTranslator = new QTranslator(qApp);
     QTranslator* applicationTranslator = new QTranslator(qApp);
 
 #if QT_VERSION >= QT_VERSION_CHECK(4,8,0)
 
-    if(toolkitTranslator->load(QLocale::system(), "qt", "_", QLibraryInfo::location(QLibraryInfo::TranslationsPath))) { qApp->installTranslator(toolkitTranslator); }
+    if (toolkitTranslator->load(QLocale::system(), "qt", "_",
+                                QLibraryInfo::location(QLibraryInfo::TranslationsPath))) {
+        qApp->installTranslator(toolkitTranslator);
+    }
 
-    if(applicationTranslator->load(QLocale::system(), "qpdfview", "_", QDir(QApplication::applicationDirPath()).filePath("data"))) { qApp->installTranslator(applicationTranslator); }
-    else if(applicationTranslator->load(QLocale::system(), "qpdfview", "_", DATA_INSTALL_PATH)) { qApp->installTranslator(applicationTranslator); }
+    if (applicationTranslator->load(QLocale::system(), "qpdfview", "_",
+                                    QDir(QApplication::applicationDirPath()).filePath("data"))) {
+        qApp->installTranslator(applicationTranslator);
+    } else if (applicationTranslator->load(QLocale::system(), "qpdfview", "_", DATA_INSTALL_PATH)) {
+        qApp->installTranslator(applicationTranslator);
+    }
 
 #else
 
