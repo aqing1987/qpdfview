@@ -137,77 +137,58 @@ void loadTranslators() {
 #endif // QT_VERSION
 }
 
-void parseCommandLineArguments()
-{
+void parseCommandLineArguments() {
     bool instanceNameIsNext = false;
     bool searchTextIsNext = false;
     bool noMoreOptions = false;
 
+    // [0-9] can be replaced with the symbol \d
+    // E+: Matches one or more occurrences of E
+    // Parentheses allow us to group elements together so that we can quantify and capture them.
     QRegExp fileAndPageRegExp("(.+)#(\\d+)");
     QRegExp fileAndSourceRegExp("(.+)#src:(.+):(\\d+):(\\d+)");
     QRegExp instanceNameRegExp("[A-Za-z_]+[A-Za-z0-9_]*");
 
     QStringList arguments = QApplication::arguments();
 
-    if(!arguments.isEmpty())
-    {
+    if(!arguments.isEmpty()) {
         arguments.removeFirst();
     }
 
-    foreach(const QString& argument, arguments)
-    {
-        if(instanceNameIsNext)
-        {
-            if(argument.isEmpty())
-            {
+    foreach (const QString& argument, arguments) {
+        if (instanceNameIsNext) {
+            if (argument.isEmpty()) {
                 qCritical() << QObject::tr("An empty instance name is not allowed.");
                 exit(ExitIllegalArgument);
             }
 
             instanceNameIsNext = false;
             instanceName = argument;
-        }
-        else if(searchTextIsNext)
-        {
-            if(argument.isEmpty())
-            {
+        } else if(searchTextIsNext) {
+            if (argument.isEmpty()) {
                 qCritical() << QObject::tr("An empty search text is not allowed.");
                 exit(ExitIllegalArgument);
             }
 
             searchTextIsNext = false;
             searchText = argument;
-        }
-        else if(!noMoreOptions && argument.startsWith("--"))
-        {
-            if(argument == QLatin1String("--unique"))
-            {
+        } else if(!noMoreOptions && argument.startsWith("--")) {
+            if (argument == QLatin1String("--unique")) {
                 unique = true;
-            }
-            else if(argument == QLatin1String("--quiet"))
-            {
+            } else if(argument == QLatin1String("--quiet")) {
                 quiet = true;
-            }
-            else if(argument == QLatin1String("--instance"))
-            {
+            } else if(argument == QLatin1String("--instance")) {
                 instanceNameIsNext = true;
-            }
-            else if(argument == QLatin1String("--search"))
-            {
+            } else if(argument == QLatin1String("--search")) {
                 searchTextIsNext = true;
-            }
-            else if(argument == QLatin1String("--choose-instance"))
-            {
+            } else if(argument == QLatin1String("--choose-instance")) {
                 bool ok = false;
                 const QString chosenInstanceName = QInputDialog::getItem(0, MainWindow::tr("Choose instance"), MainWindow::tr("Instance:"), Database::instance()->knownInstanceNames(), 0, true, &ok);
 
-                if(ok)
-                {
+                if (ok) {
                     instanceName = chosenInstanceName;
                 }
-            }
-            else if(argument == QLatin1String("--help"))
-            {
+            } else if(argument == QLatin1String("--help")) {
                 std::cout << "Usage: qpdfview [options] [--] [file[#page]] [file[#src:name:line:column]] ..." << std::endl
                           << std::endl
                           << "Available options:" << std::endl
@@ -221,35 +202,24 @@ void parseCommandLineArguments()
                           << "Please report bugs at \"https://launchpad.net/qpdfview\"." << std::endl;
 
                 exit(ExitOk);
-            }
-            else if(argument == QLatin1String("--"))
-            {
+            } else if(argument == QLatin1String("--")) {
                 noMoreOptions = true;
-            }
-            else
-            {
+            } else {
                 qCritical() << QObject::tr("Unknown command-line option '%1'.").arg(argument);
                 exit(ExitUnknownArgument);
             }
-        }
-        else
-        {
+        } else {
             File file;
 
-            if(fileAndPageRegExp.exactMatch(argument))
-            {
+            if (fileAndPageRegExp.exactMatch(argument)) {
                 file.filePath = fileAndPageRegExp.cap(1);
                 file.page = fileAndPageRegExp.cap(2).toInt();
-            }
-            else if(fileAndSourceRegExp.exactMatch(argument))
-            {
+            } else if(fileAndSourceRegExp.exactMatch(argument)) {
                 file.filePath = fileAndSourceRegExp.cap(1);
                 file.sourceName = fileAndSourceRegExp.cap(2);
                 file.sourceLine = fileAndSourceRegExp.cap(3).toInt();
                 file.sourceColumn = fileAndSourceRegExp.cap(4).toInt();
-            }
-            else
-            {
+            } else {
                 file.filePath = argument;
             }
 
@@ -257,26 +227,22 @@ void parseCommandLineArguments()
         }
     }
 
-    if(instanceNameIsNext)
-    {
+    if (instanceNameIsNext) {
         qCritical() << QObject::tr("Using '--instance' requires an instance name.");
         exit(ExitInconsistentArguments);
     }
 
-    if(!unique && !instanceName.isEmpty())
-    {
+    if (!unique && !instanceName.isEmpty()) {
         qCritical() << QObject::tr("Using '--instance' is not allowed without using '--unique'.");
         exit(ExitInconsistentArguments);
     }
 
-    if(!instanceName.isEmpty() && !instanceNameRegExp.exactMatch(instanceName))
-    {
+    if (!instanceName.isEmpty() && !instanceNameRegExp.exactMatch(instanceName)) {
         qCritical() << QObject::tr("An instance name must only contain the characters \"[A-Z][a-z][0-9]_\" and must not begin with a digit.");
         exit(ExitIllegalArgument);
     }
 
-    if(searchTextIsNext)
-    {
+    if (searchTextIsNext) {
         qCritical() << QObject::tr("Using '--search' requires a search text.");
         exit(ExitInconsistentArguments);
     }
