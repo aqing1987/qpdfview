@@ -282,43 +282,39 @@ void parseWorkbenchExtendedSelection(int argc, char** argv) {
 #endif // __amigaos4__
 }
 
-void resolveSourceReferences()
-{
+void resolveSourceReferences() {
 #ifdef WITH_SYNCTEX
 
-    for(int index = 0; index < files.count(); ++index)
-    {
+    //qDebug() << "files count:" << files.count() << "\n";
+    for (int index = 0; index < files.count(); ++index) {
         File& file = files[index];
 
-        if(!file.sourceName.isNull())
-        {
-            synctex_scanner_t scanner = synctex_scanner_new_with_output_file(file.filePath.toLocal8Bit(), 0, 1);
+        if (!file.sourceName.isNull()) {
+            synctex_scanner_t scanner =
+                    synctex_scanner_new_with_output_file(file.filePath.toLocal8Bit(), 0, 1);
 
-            if(scanner != 0)
-            {
-                if(synctex_display_query(scanner, file.sourceName.toLocal8Bit(), file.sourceLine, file.sourceColumn) > 0)
-                {
-                    for(synctex_node_t node = synctex_next_result(scanner); node != 0; node = synctex_next_result(scanner))
-                    {
+            if (scanner != 0) {
+                if (synctex_display_query(scanner, file.sourceName.toLocal8Bit(),
+                                          file.sourceLine, file.sourceColumn) > 0) {
+                    for (synctex_node_t node = synctex_next_result(scanner);
+                         node != 0; node = synctex_next_result(scanner)) {
                         int page = synctex_node_page(node);
-                        QRectF enclosingBox(synctex_node_box_visible_h(node), synctex_node_box_visible_v(node), synctex_node_box_visible_width(node), synctex_node_box_visible_height(node));
+                        QRectF enclosingBox(synctex_node_box_visible_h(node),
+                                            synctex_node_box_visible_v(node),
+                                            synctex_node_box_visible_width(node),
+                                            synctex_node_box_visible_height(node));
 
-                        if(file.page != page)
-                        {
+                        if (file.page != page) {
                             file.page = page;
                             file.enclosingBox = enclosingBox;
-                        }
-                        else
-                        {
+                        } else {
                             file.enclosingBox = file.enclosingBox.united(enclosingBox);
                         }
                     }
                 }
 
                 synctex_scanner_free(scanner);
-            }
-            else
-            {
+            } else {
                 qWarning() << DocumentView::tr("SyncTeX data for '%1' could not be found.").arg(file.filePath);
             }
         }
