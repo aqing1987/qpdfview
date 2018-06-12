@@ -323,59 +323,50 @@ void resolveSourceReferences() {
 #endif // WITH_SYNCTEX
 }
 
-void activateUniqueInstance()
-{
+void activateUniqueInstance() {
     qApp->setObjectName(instanceName);
 
 #ifdef WITH_DBUS
 
-    if(unique)
-    {
-        QScopedPointer< QDBusInterface > interface(MainWindowAdaptor::createInterface());
+    // check if use unique window
+    if (unique) {
+        QScopedPointer<QDBusInterface> interface(MainWindowAdaptor::createInterface());
 
-        if(interface->isValid())
-        {
+        if (interface->isValid()) {
             interface->call("raiseAndActivate");
 
-            foreach(const File& file, files)
-            {
-                QDBusReply< bool > reply = interface->call("jumpToPageOrOpenInNewTab", QFileInfo(file.filePath).absoluteFilePath(), file.page, true, file.enclosingBox, quiet);
+            foreach (const File& file, files) {
+                QDBusReply<bool> reply = interface->call("jumpToPageOrOpenInNewTab",
+                                                         QFileInfo(file.filePath).absoluteFilePath(),
+                                                         file.page, true, file.enclosingBox, quiet);
 
-                if(!reply.isValid())
-                {
+                if (!reply.isValid()) {
                     qCritical() << QDBusConnection::sessionBus().lastError().message();
 
                     exit(ExitDBusError);
                 }
             }
 
-            if(!files.isEmpty())
-            {
+            if (!files.isEmpty()) {
                 interface->call("saveDatabase");
             }
 
-            if(!searchText.isEmpty())
-            {
+            if (!searchText.isEmpty()) {
                 interface->call("startSearch", searchText);
             }
 
             exit(ExitOk);
-        }
-        else
-        {
+        } else {
             mainWindow = new MainWindow();
 
-            if(MainWindowAdaptor::createAdaptor(mainWindow) == 0)
-            {
+            if (MainWindowAdaptor::createAdaptor(mainWindow) == 0) {
                 qCritical() << QDBusConnection::sessionBus().lastError().message();
 
                 delete mainWindow;
                 exit(ExitDBusError);
             }
         }
-    }
-    else
-    {
+    } else {
         mainWindow = new MainWindow();
     }
 

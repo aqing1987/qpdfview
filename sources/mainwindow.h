@@ -69,8 +69,7 @@ class ShortcutHandler;
 class SearchModel;
 class HelpDialog;
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
     friend class MainWindowAdaptor;

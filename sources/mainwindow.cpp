@@ -356,22 +356,19 @@ Database* MainWindow::s_database = 0;
 ShortcutHandler* MainWindow::s_shortcutHandler = 0;
 SearchModel* MainWindow::s_searchModel = 0;
 
+// member initialization list
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent),
     m_outlineView(0),
-    m_thumbnailsView(0)
-{
-    if(s_settings == 0)
-    {
+    m_thumbnailsView(0) {
+    if (s_settings == 0) {
         s_settings = Settings::instance();
     }
 
-    if(s_shortcutHandler == 0)
-    {
+    if (s_shortcutHandler == 0) {
         s_shortcutHandler = ShortcutHandler::instance();
     }
 
-    if(s_searchModel == 0)
-    {
+    if (s_searchModel == 0) {
         s_searchModel = SearchModel::instance();
     }
 
