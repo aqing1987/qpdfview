@@ -360,6 +360,7 @@ SearchModel* MainWindow::s_searchModel = 0;
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent),
     m_outlineView(0),
     m_thumbnailsView(0) {
+
     if (s_settings == 0) {
         s_settings = Settings::instance();
     }

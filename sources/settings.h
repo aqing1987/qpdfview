@@ -35,21 +35,27 @@ class QSettings;
 #include "global.h"
 #include "printoptions.h"
 
-namespace qpdfview
-{
+namespace qpdfview {
 
-class Settings : public QObject
-{
+class Settings : public QObject {
     Q_OBJECT
 
-public:
+public:    
+    // By declaring a function member as static, you make it independent of
+    // any particular object of the class. A static member function can be
+    // called even if no objects of the class exist and the static functions
+    // are accessed using only the class name and the scope resolution operator
+    // ::
+    // A static member function can only access static data member, other static
+    // member functions and any other functions from outside the class.
+    // Static member functions have a class scope and they do not have access
+    // to the this pointer of the class. You could use a static member function
+    // to determine whether some objects of the class have been created or not.
     static Settings* instance();
     ~Settings();
 
     // page item
-
-    class PageItem
-    {
+    class PageItem {
     public:
         void sync();
 
@@ -164,8 +170,7 @@ public:
 
     // document view
 
-    class DocumentView
-    {
+    class DocumentView {
     public:
         void sync();
 
@@ -296,8 +301,7 @@ public:
 
     // main window
 
-    class MainWindow
-    {
+    class MainWindow {
     public:
         bool trackRecentlyUsed() const;
         void setTrackRecentlyUsed(bool trackRecentlyUsed);
@@ -425,8 +429,7 @@ public:
 
     // print dialog
 
-    class PrintDialog
-    {
+    class PrintDialog {
     public:
         bool collateCopies() const;
         void setCollateCopies(bool collateCopies);
@@ -467,6 +470,7 @@ public:
 
     };
 
+    // === Settings member functions
     void sync();
 
     PageItem& pageItem() { return m_pageItem; }
@@ -478,9 +482,21 @@ public:
 private:
     Q_DISABLE_COPY(Settings)
 
+    // A static member is shared by all objects of the class. All static data is
+    // initialized to zero when the first object is created, if no other
+    // initialization is present. We can't put it in the class definition but it
+    // can be initialized outside the class as done in the following example by
+    // redeclaring the static variable, using the scope resolution operator ::
+    // to identify which class it belongs to.
     static Settings* s_instance;
     Settings(QObject* parent = 0);
 
+    // The QSettings class provides persistent platform-independent application settings.
+    // Users normally expect an application to remember its settings (window sizes and
+    // positions, options, etc.) across sessions. This information is often stored in the
+    // system registry on Windows, and in property list files on OS X and iOS. On Unix
+    // systems, in the absence of a standard, many applications (including the KDE applications)
+    // use INI text files.
     QSettings* m_settings;
 
     PageItem m_pageItem;
@@ -493,11 +509,9 @@ private:
 
 // defaults
 
-class Defaults
-{
+class Defaults {
 public:
-    class PageItem
-    {
+    class PageItem {
     public:
         static int cacheSize() { return 32 * 1024; }
 
@@ -530,8 +544,7 @@ public:
 
     };
 
-    class PresentationView
-    {
+    class PresentationView {
     public:
         static bool synchronize() { return false; }
         static int screen() { return -1; }
@@ -543,8 +556,7 @@ public:
 
     };
 
-    class DocumentView
-    {
+    class DocumentView {
     public:
         static bool openUrl() { return false; }
 
@@ -608,8 +620,7 @@ public:
 
     };
 
-    class MainWindow
-    {
+    class MainWindow {
     public:
         static bool trackRecentlyUsed() { return false; }
         static int recentlyUsedCount() { return 10; }
@@ -664,8 +675,7 @@ public:
 
     };
 
-    class PrintDialog
-    {
+    class PrintDialog {
     public:
         static bool collateCopies() { return false; }
 

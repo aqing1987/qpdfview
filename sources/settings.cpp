@@ -38,66 +38,52 @@ along with qpdfview.  If not, see <http://www.gnu.org/licenses/>.
 
 #endif // QT_VERSION
 
-namespace
-{
+namespace {
 
-inline QStringList trimmed(const QStringList& list)
-{
+inline QStringList trimmed(const QStringList& list) {
     QStringList trimmedList;
 
-    foreach(const QString& item, list)
-    {
+    foreach (const QString& item, list) {
         trimmedList.append(item.trimmed());
     }
 
     return trimmedList;
 }
 
-int toInt(const QString& text, int defaultValue)
-{
+int toInt(const QString& text, int defaultValue) {
     bool ok = false;
     const int value = text.toInt(&ok);
     return ok ? value : defaultValue;
 }
 
-int dataSize(const QSettings* settings, const QString& key, int defaultValue)
-{
+int dataSize(const QSettings* settings, const QString& key, int defaultValue) {
     QString text = settings->value(key, QString("%1K").arg(defaultValue)).toString().trimmed();
 
-    if(text.endsWith('M'))
-    {
+    if (text.endsWith('M')) {
         text.chop(1);
 
         return toInt(text, defaultValue / 1024) * 1024;
-    }
-    else if(text.endsWith('K'))
-    {
+    } else if(text.endsWith('K')) {
         text.chop(1);
 
         return toInt(text, defaultValue);
-    }
-    else
-    {
+    } else {
         return toInt(text, defaultValue * 1024) / 1024;
     }
 }
 
-void setDataSize(QSettings* settings, const QString& key, int value)
-{
+void setDataSize(QSettings* settings, const QString& key, int value) {
     settings->setValue(key, QString("%1K").arg(value));
 }
 
 } // anonymous
 
-namespace qpdfview
-{
+namespace qpdfview {
 
 Settings* Settings::s_instance = 0;
 
-Settings* Settings::instance()
-{
-    if(s_instance == 0)
-    {
+Settings* Settings::instance() {
+    if (s_instance == 0) {
         s_instance = new Settings(qApp);
 
         s_instance->sync();
@@ -106,15 +92,14 @@ Settings* Settings::instance()
     return s_instance;
 }
 
-Settings::~Settings()
-{
+Settings::~Settings() {
     s_instance = 0;
 }
 
 // page item
 
-void Settings::PageItem::sync()
-{
+// read PageItem settings
+void Settings::PageItem::sync() {
     m_cacheSize = dataSize(m_settings, "pageItem/cacheSize", Defaults::PageItem::cacheSize());
 
     m_useTiling = m_settings->value("pageItem/useTiling", Defaults::PageItem::useTiling()).toBool();
@@ -133,136 +118,111 @@ void Settings::PageItem::sync()
     m_highlightColor = m_settings->value("pageItem/highlightColor", Defaults::PageItem::highlightColor()).value< QColor >();
 }
 
-void Settings::PageItem::setCacheSize(int cacheSize)
-{
-    if(cacheSize >= 0)
-    {
+void Settings::PageItem::setCacheSize(int cacheSize) {
+    if (cacheSize >= 0) {
         m_cacheSize = cacheSize;
         setDataSize(m_settings, "pageItem/cacheSize", cacheSize);
     }
 }
 
-void Settings::PageItem::setUseTiling(bool useTiling)
-{
+void Settings::PageItem::setUseTiling(bool useTiling) {
     m_useTiling = useTiling;
     m_settings->setValue("pageItem/useTiling", useTiling);
 }
 
-void Settings::PageItem::setKeepObsoletePixmaps(bool keepObsoletePixmaps)
-{
+void Settings::PageItem::setKeepObsoletePixmaps(bool keepObsoletePixmaps) {
     m_keepObsoletePixmaps = keepObsoletePixmaps;
     m_settings->setValue("pageItem/keepObsoletePixmaps", keepObsoletePixmaps);
 }
 
-void Settings::PageItem::setUseDevicePixelRatio(bool useDevicePixelRatio)
-{
+void Settings::PageItem::setUseDevicePixelRatio(bool useDevicePixelRatio) {
     m_useDevicePixelRatio = useDevicePixelRatio;
     m_settings->setValue("pageItem/useDevicePixelRatio", useDevicePixelRatio);
 }
 
-void Settings::PageItem::setDecoratePages(bool decoratePages)
-{
+void Settings::PageItem::setDecoratePages(bool decoratePages) {
     m_decoratePages = decoratePages;
     m_settings->setValue("pageItem/decoratePages", decoratePages);
 }
 
-void Settings::PageItem::setDecorateLinks(bool decorateLinks)
-{
+void Settings::PageItem::setDecorateLinks(bool decorateLinks) {
     m_decorateLinks = decorateLinks;
     m_settings->setValue("pageItem/decorateLinks", decorateLinks);
 }
 
-void Settings::PageItem::setDecorateFormFields(bool decorateFormFields)
-{
+void Settings::PageItem::setDecorateFormFields(bool decorateFormFields) {
     m_decorateFormFields = decorateFormFields;
     m_settings->setValue("pageItem/decorateFormFields", decorateFormFields);
 }
 
-void Settings::PageItem::setBackgroundColor(const QColor& backgroundColor)
-{
+void Settings::PageItem::setBackgroundColor(const QColor& backgroundColor) {
     m_backgroundColor = backgroundColor;
     m_settings->setValue("pageItem/backgroundColor", backgroundColor);
 }
 
-void Settings::PageItem::setPaperColor(const QColor& paperColor)
-{
+void Settings::PageItem::setPaperColor(const QColor& paperColor) {
     m_paperColor = paperColor;
     m_settings->setValue("pageItem/paperColor", paperColor);
 }
 
-void Settings::PageItem::setHighlightColor(const QColor& highlightColor)
-{
+void Settings::PageItem::setHighlightColor(const QColor& highlightColor) {
     m_highlightColor = highlightColor;
     m_settings->setValue("pageItem/highlightColor", highlightColor);
 }
 
-QColor Settings::PageItem::annotationColor() const
-{
+QColor Settings::PageItem::annotationColor() const {
     return m_settings->value("pageItem/annotationColor", Defaults::PageItem::annotationColor()).value< QColor >();
 }
 
-void Settings::PageItem::setAnnotationColor(const QColor& annotationColor)
-{
+void Settings::PageItem::setAnnotationColor(const QColor& annotationColor) {
     m_settings->setValue("pageItem/annotationColor", annotationColor);
 }
 
-Qt::KeyboardModifiers Settings::PageItem::copyToClipboardModifiers() const
-{
+Qt::KeyboardModifiers Settings::PageItem::copyToClipboardModifiers() const {
     return static_cast< Qt::KeyboardModifiers >(m_settings->value("pageItem/copyToClipboardModifiers", static_cast< int >(Defaults::PageItem::copyToClipboardModifiers())).toInt());
 }
 
-void Settings::PageItem::setCopyToClipboardModifiers(Qt::KeyboardModifiers modifiers)
-{
+void Settings::PageItem::setCopyToClipboardModifiers(Qt::KeyboardModifiers modifiers) {
     m_settings->setValue("pageItem/copyToClipboardModifiers", static_cast< int >(modifiers));
 }
 
-Qt::KeyboardModifiers Settings::PageItem::addAnnotationModifiers() const
-{
+Qt::KeyboardModifiers Settings::PageItem::addAnnotationModifiers() const {
     return static_cast< Qt::KeyboardModifiers >(m_settings->value("pageItem/addAnnotationModifiers", static_cast< int >(Defaults::PageItem::addAnnotationModifiers())).toInt());
 }
 
-void Settings::PageItem::setAddAnnotationModifiers(Qt::KeyboardModifiers modifiers)
-{
+void Settings::PageItem::setAddAnnotationModifiers(Qt::KeyboardModifiers modifiers) {
     m_settings->setValue("pageItem/addAnnotationModifiers", static_cast< int >(modifiers));
 }
 
-Qt::KeyboardModifiers Settings::PageItem::zoomToSelectionModifiers() const
-{
+Qt::KeyboardModifiers Settings::PageItem::zoomToSelectionModifiers() const {
     return static_cast< Qt::KeyboardModifiers>(m_settings->value("pageItem/zoomToSelectionModifiers", static_cast< int >(Defaults::PageItem::zoomToSelectionModifiers())).toInt());
 }
 
-void Settings::PageItem::setZoomToSelectionModifiers(Qt::KeyboardModifiers modifiers)
-{
+void Settings::PageItem::setZoomToSelectionModifiers(Qt::KeyboardModifiers modifiers) {
     m_settings->setValue("pageItem/zoomToSelectionModifiers", static_cast< int >(modifiers));
 }
 
-Qt::KeyboardModifiers Settings::PageItem::openInSourceEditorModifiers() const
-{
+Qt::KeyboardModifiers Settings::PageItem::openInSourceEditorModifiers() const {
     return static_cast< Qt::KeyboardModifiers >(m_settings->value("pageItem/openInSourceEditorModifiers", static_cast< int >(Defaults::PageItem::openInSourceEditorModifiers())).toInt());
 }
 
-void Settings::PageItem::setOpenInSourceEditorModifiers(Qt::KeyboardModifiers modifiers)
-{
+void Settings::PageItem::setOpenInSourceEditorModifiers(Qt::KeyboardModifiers modifiers) {
     m_settings->setValue("pageItem/openInSourceEditorModifiers", static_cast< int >(modifiers));
 }
 
-bool Settings::PageItem::annotationOverlay() const
-{
+bool Settings::PageItem::annotationOverlay() const {
     return m_settings->value("pageItem/annotationOverlay", Defaults::PageItem::annotationOverlay()).toBool();
 }
 
-void Settings::PageItem::setAnnotationOverlay(bool overlay)
-{
+void Settings::PageItem::setAnnotationOverlay(bool overlay) {
     m_settings->setValue("pageItem/annotationOverlay", overlay);
 }
 
-bool Settings::PageItem::formFieldOverlay() const
-{
+bool Settings::PageItem::formFieldOverlay() const {
     return m_settings->value("pageItem/formFieldOverlay", Defaults::PageItem::formFieldOverlay()).toBool();
 }
 
-void Settings::PageItem::setFormFieldOverlay(bool overlay)
-{
+void Settings::PageItem::setFormFieldOverlay(bool overlay) {
     m_settings->setValue("pageItem/formFieldOverlay", overlay);
 }
 
@@ -328,8 +288,7 @@ Settings::PresentationView::PresentationView(QSettings* settings) :
 
 // document view
 
-void Settings::DocumentView::sync()
-{
+void Settings::DocumentView::sync() {
     m_prefetch = m_settings->value("documentView/prefetch", Defaults::DocumentView::prefetch()).toBool();
     m_prefetchDistance = m_settings->value("documentView/prefetchDistance", Defaults::DocumentView::prefetchDistance()).toInt();
 
@@ -346,317 +305,254 @@ void Settings::DocumentView::sync()
     m_thumbnailSize = m_settings->value("documentView/thumbnailSize", Defaults::DocumentView::thumbnailSize()).toReal();
 }
 
-bool Settings::DocumentView::openUrl() const
-{
+bool Settings::DocumentView::openUrl() const {
     return m_settings->value("documentView/openUrl", Defaults::DocumentView::openUrl()).toBool();
 }
 
-void Settings::DocumentView::setOpenUrl(bool openUrl)
-{
+void Settings::DocumentView::setOpenUrl(bool openUrl) {
     m_settings->setValue("documentView/openUrl", openUrl);
 }
 
-bool Settings::DocumentView::autoRefresh() const
-{
+bool Settings::DocumentView::autoRefresh() const {
     return m_settings->value("documentView/autoRefresh", Defaults::DocumentView::autoRefresh()).toBool();
 }
 
-void Settings::DocumentView::setAutoRefresh(bool autoRefresh)
-{
+void Settings::DocumentView::setAutoRefresh(bool autoRefresh) {
     m_settings->setValue("documentView/autoRefresh", autoRefresh);
 }
 
-int Settings::DocumentView::autoRefreshTimeout() const
-{
+int Settings::DocumentView::autoRefreshTimeout() const {
     return m_settings->value("documentView/autoRefreshTimeout", Defaults::DocumentView::autoRefreshTimeout()).toInt();
 }
 
-void Settings::DocumentView::setPrefetch(bool prefetch)
-{
+void Settings::DocumentView::setPrefetch(bool prefetch) {
     m_prefetch = prefetch;
     m_settings->setValue("documentView/prefetch", prefetch);
 }
 
-void Settings::DocumentView::setPrefetchDistance(int prefetchDistance)
-{
-    if(prefetchDistance > 0)
-    {
+void Settings::DocumentView::setPrefetchDistance(int prefetchDistance) {
+    if (prefetchDistance > 0) {
         m_prefetchDistance = prefetchDistance;
         m_settings->setValue("documentView/prefetchDistance", prefetchDistance);
     }
 }
 
-int Settings::DocumentView::prefetchTimeout() const
-{
+int Settings::DocumentView::prefetchTimeout() const {
     return m_settings->value("documentView/prefetchTimeout", Defaults::DocumentView::prefetchTimeout()).toInt();
 }
 
-void Settings::DocumentView::setPagesPerRow(int pagesPerRow)
-{
-    if(pagesPerRow > 0)
-    {
+void Settings::DocumentView::setPagesPerRow(int pagesPerRow) {
+    if (pagesPerRow > 0) {
         m_pagesPerRow = pagesPerRow;
         m_settings->setValue("documentView/pagesPerRow", pagesPerRow);
     }
 }
 
-void Settings::DocumentView::setMinimalScrolling(bool minimalScrolling)
-{
+void Settings::DocumentView::setMinimalScrolling(bool minimalScrolling) {
     m_minimalScrolling = minimalScrolling;
     m_settings->setValue("documentView/minimalScrolling", minimalScrolling);
 }
 
-void Settings::DocumentView::setHighlightCurrentThumbnail(bool highlightCurrentThumbnail)
-{
+void Settings::DocumentView::setHighlightCurrentThumbnail(bool highlightCurrentThumbnail) {
     m_highlightCurrentThumbnail = highlightCurrentThumbnail;
     m_settings->setValue("documentView/highlightCurrentThumbnail", highlightCurrentThumbnail);
 }
 
-void Settings::DocumentView::setLimitThumbnailsToResults(bool limitThumbnailsToResults)
-{
+void Settings::DocumentView::setLimitThumbnailsToResults(bool limitThumbnailsToResults) {
     m_limitThumbnailsToResults = limitThumbnailsToResults;
     m_settings->setValue("documentView/limitThumbnailsToResults", limitThumbnailsToResults);
 }
 
-qreal Settings::DocumentView::minimumScaleFactor() const
-{
+qreal Settings::DocumentView::minimumScaleFactor() const {
     return m_settings->value("documentView/minimumScaleFactor", Defaults::DocumentView::minimumScaleFactor()).toReal();
 }
 
-qreal Settings::DocumentView::maximumScaleFactor() const
-{
+qreal Settings::DocumentView::maximumScaleFactor() const {
     return m_settings->value("documentView/maximumScaleFactor", Defaults::DocumentView::maximumScaleFactor()).toReal();
 }
 
-qreal Settings::DocumentView::zoomFactor() const
-{
+qreal Settings::DocumentView::zoomFactor() const {
     return m_settings->value("documentView/zoomFactor", Defaults::DocumentView::zoomFactor()).toReal();
 }
 
-void Settings::DocumentView::setZoomFactor(qreal zoomFactor)
-{
+void Settings::DocumentView::setZoomFactor(qreal zoomFactor) {
     m_settings->setValue("documentView/zoomFactor", zoomFactor);
 }
 
-void Settings::DocumentView::setPageSpacing(qreal pageSpacing)
-{
-    if(pageSpacing >= 0.0)
-    {
+void Settings::DocumentView::setPageSpacing(qreal pageSpacing) {
+    if (pageSpacing >= 0.0) {
         m_pageSpacing = pageSpacing;
         m_settings->setValue("documentView/pageSpacing", pageSpacing);
     }
 }
 
-void Settings::DocumentView::setThumbnailSpacing(qreal thumbnailSpacing)
-{
-    if(thumbnailSpacing >= 0.0)
-    {
+void Settings::DocumentView::setThumbnailSpacing(qreal thumbnailSpacing) {
+    if (thumbnailSpacing >= 0.0) {
         m_thumbnailSpacing = thumbnailSpacing;
         m_settings->setValue("documentView/thumbnailSpacing", thumbnailSpacing);
     }
 }
 
-void Settings::DocumentView::setThumbnailSize(qreal thumbnailSize)
-{
-    if(thumbnailSize >= 0.0)
-    {
+void Settings::DocumentView::setThumbnailSize(qreal thumbnailSize) {
+    if (thumbnailSize >= 0.0) {
         m_thumbnailSize = thumbnailSize;
         m_settings->setValue("documentView/thumbnailSize", thumbnailSize);
     }
 }
 
-bool Settings::DocumentView::matchCase() const
-{
+bool Settings::DocumentView::matchCase() const {
     return m_settings->value("documentView/matchCase", Defaults::DocumentView::matchCase()).toBool();
 }
 
-void Settings::DocumentView::setMatchCase(bool matchCase)
-{
+void Settings::DocumentView::setMatchCase(bool matchCase) {
     m_settings->setValue("documentView/matchCase", matchCase);
 }
 
-bool Settings::DocumentView::wholeWords() const
-{
+bool Settings::DocumentView::wholeWords() const {
     return m_settings->value("documentView/wholeWords", Defaults::DocumentView::wholeWords()).toBool();
 }
 
-void Settings::DocumentView::setWholeWords(bool wholeWords)
-{
+void Settings::DocumentView::setWholeWords(bool wholeWords) {
     m_settings->setValue("documentView/wholeWords", wholeWords);
 }
 
-bool Settings::DocumentView::parallelSearchExecution() const
-{
+bool Settings::DocumentView::parallelSearchExecution() const {
     return m_settings->value("documentView/parallelSearchExecution", Defaults::DocumentView::parallelSearchExecution()).toBool();
 }
 
-void Settings::DocumentView::setParallelSearchExecution(bool parallelSearchExecution)
-{
+void Settings::DocumentView::setParallelSearchExecution(bool parallelSearchExecution) {
     m_settings->setValue("documentView/parallelSearchExecution", parallelSearchExecution);
 }
 
-int Settings::DocumentView::highlightDuration() const
-{
+int Settings::DocumentView::highlightDuration() const {
     return m_settings->value("documentView/highlightDuration", Defaults::DocumentView::highlightDuration()).toInt();
 }
 
-void Settings::DocumentView::setHighlightDuration(int highlightDuration)
-{
-    if(highlightDuration >= 0)
-    {
+void Settings::DocumentView::setHighlightDuration(int highlightDuration) {
+    if (highlightDuration >= 0) {
         m_settings->setValue("documentView/highlightDuration", highlightDuration);
     }
 }
 
-QString Settings::DocumentView::sourceEditor() const
-{
+QString Settings::DocumentView::sourceEditor() const {
     return m_settings->value("documentView/sourceEditor", Defaults::DocumentView::sourceEditor()).toString();
 }
 
-void Settings::DocumentView::setSourceEditor(const QString& sourceEditor)
-{
+void Settings::DocumentView::setSourceEditor(const QString& sourceEditor) {
     m_settings->setValue("documentView/sourceEditor", sourceEditor);
 }
 
-Qt::KeyboardModifiers Settings::DocumentView::zoomModifiers() const
-{
+Qt::KeyboardModifiers Settings::DocumentView::zoomModifiers() const {
     return static_cast< Qt::KeyboardModifiers >(m_settings->value("documentView/zoomModifiers", static_cast< int >(Defaults::DocumentView::zoomModifiers())).toInt());
 }
 
-void Settings::DocumentView::setZoomModifiers(Qt::KeyboardModifiers zoomModifiers)
-{
+void Settings::DocumentView::setZoomModifiers(Qt::KeyboardModifiers zoomModifiers) {
     m_settings->setValue("documentView/zoomModifiers", static_cast< int >(zoomModifiers));
 }
 
-Qt::KeyboardModifiers Settings::DocumentView::rotateModifiers() const
-{
+Qt::KeyboardModifiers Settings::DocumentView::rotateModifiers() const {
     return static_cast< Qt::KeyboardModifiers >(m_settings->value("documentView/rotateModifiers", static_cast< int >(Defaults::DocumentView::rotateModifiers())).toInt());
 }
 
-void Settings::DocumentView::setRotateModifiers(Qt::KeyboardModifiers rotateModifiers)
-{
+void Settings::DocumentView::setRotateModifiers(Qt::KeyboardModifiers rotateModifiers) {
     m_settings->setValue("documentView/rotateModifiers", static_cast< int >(rotateModifiers));
 }
 
-Qt::KeyboardModifiers Settings::DocumentView::scrollModifiers() const
-{
+Qt::KeyboardModifiers Settings::DocumentView::scrollModifiers() const {
     return static_cast< Qt::KeyboardModifiers >(m_settings->value("documentView/scrollModifiers", static_cast< int >(Defaults::DocumentView::scrollModifiers())).toInt());
 }
 
-void Settings::DocumentView::setScrollModifiers(Qt::KeyboardModifiers scrollModifiers)
-{
+void Settings::DocumentView::setScrollModifiers(Qt::KeyboardModifiers scrollModifiers) {
     m_settings->setValue("documentView/scrollModifiers", static_cast< int >(scrollModifiers));
 }
 
 // per-tab settings
 
-bool Settings::DocumentView::continuousMode() const
-{
+bool Settings::DocumentView::continuousMode() const {
     return m_settings->value("documentView/continuousMode", Defaults::DocumentView::continuousMode()).toBool();
 }
 
-void Settings::DocumentView::setContinuousMode(bool continuousMode)
-{
+void Settings::DocumentView::setContinuousMode(bool continuousMode) {
     m_settings->setValue("documentView/continuousMode", continuousMode);
 }
 
-LayoutMode Settings::DocumentView::layoutMode() const
-{
+LayoutMode Settings::DocumentView::layoutMode() const {
     return static_cast< LayoutMode >(m_settings->value("documentView/layoutMode", static_cast< uint >(Defaults::DocumentView::layoutMode())).toUInt());
 }
 
-void Settings::DocumentView::setLayoutMode(LayoutMode layoutMode)
-{
+void Settings::DocumentView::setLayoutMode(LayoutMode layoutMode) {
     m_settings->setValue("documentView/layoutMode", static_cast< uint >(layoutMode));
 }
 
-bool Settings::DocumentView::rightToLeftMode() const
-{
+bool Settings::DocumentView::rightToLeftMode() const {
     return m_settings->value("documentView/rightToLeftMode", Defaults::DocumentView::rightToLeftMode()).toBool();
 }
 
-void Settings::DocumentView::setRightToLeftMode(bool rightToLeftMode)
-{
+void Settings::DocumentView::setRightToLeftMode(bool rightToLeftMode) {
     m_settings->setValue("documentView/rightToLeftMode", rightToLeftMode);
 }
 
-ScaleMode Settings::DocumentView::scaleMode() const
-{
+ScaleMode Settings::DocumentView::scaleMode() const {
     return static_cast< ScaleMode >(m_settings->value("documentView/scaleMode", static_cast< uint >(Defaults::DocumentView::scaleMode())).toUInt());
 }
 
-void Settings::DocumentView::setScaleMode(ScaleMode scaleMode)
-{
+void Settings::DocumentView::setScaleMode(ScaleMode scaleMode) {
     m_settings->setValue("documentView/scaleMode", static_cast< uint >(scaleMode));
 }
 
-qreal Settings::DocumentView::scaleFactor() const
-{
+qreal Settings::DocumentView::scaleFactor() const {
     return m_settings->value("documentView/scaleFactor", Defaults::DocumentView::scaleFactor()).toReal();
 }
 
-void Settings::DocumentView::setScaleFactor(qreal scaleFactor)
-{
+void Settings::DocumentView::setScaleFactor(qreal scaleFactor) {
     m_settings->setValue("documentView/scaleFactor", scaleFactor);
 }
 
-Rotation Settings::DocumentView::rotation() const
-{
+Rotation Settings::DocumentView::rotation() const {
     return static_cast< Rotation >(m_settings->value("documentView/rotation", static_cast< uint >(Defaults::DocumentView::rotation())).toUInt());
 }
 
-void Settings::DocumentView::setRotation(Rotation rotation)
-{
+void Settings::DocumentView::setRotation(Rotation rotation) {
     m_settings->setValue("documentView/rotation", static_cast< uint >(rotation));
 }
 
-bool Settings::DocumentView::invertColors() const
-{
+bool Settings::DocumentView::invertColors() const {
     return m_settings->value("documentView/invertColors", Defaults::DocumentView::invertColors()).toBool();
 }
 
-void Settings::DocumentView::setInvertColors(bool invertColors)
-{
+void Settings::DocumentView::setInvertColors(bool invertColors) {
     m_settings->setValue("documentView/invertColors", invertColors);
 }
 
-bool Settings::DocumentView::convertToGrayscale() const
-{
+bool Settings::DocumentView::convertToGrayscale() const {
     return m_settings->value("documentView/convertToGrayscale", Defaults::DocumentView::convertToGrayscale()).toBool();
 }
 
-void Settings::DocumentView::setConvertToGrayscale(bool convertToGrayscale)
-{
+void Settings::DocumentView::setConvertToGrayscale(bool convertToGrayscale) {
     m_settings->setValue("documentView/convertToGrayscale", convertToGrayscale);
 }
 
-bool Settings::DocumentView::trimMargins() const
-{
+bool Settings::DocumentView::trimMargins() const {
     return m_settings->value("documentView/trimMargins", Defaults::DocumentView::trimMargins()).toBool();
 }
 
-void Settings::DocumentView::setTrimMargins(bool trimMargins)
-{
+void Settings::DocumentView::setTrimMargins(bool trimMargins) {
     m_settings->setValue("documentView/trimMargins", trimMargins);
 }
 
-CompositionMode Settings::DocumentView::compositionMode() const
-{
+CompositionMode Settings::DocumentView::compositionMode() const {
     return static_cast< CompositionMode >(m_settings->value("documentView/compositionMode", static_cast< uint >(Defaults::DocumentView::compositionMode())).toInt());
 }
 
-void Settings::DocumentView::setCompositionMode(CompositionMode compositionMode)
-{
+void Settings::DocumentView::setCompositionMode(CompositionMode compositionMode) {
     m_settings->setValue("documentView/compositionMode", static_cast< uint >(compositionMode));
 }
 
-bool Settings::DocumentView::highlightAll() const
-{
+bool Settings::DocumentView::highlightAll() const {
     return m_settings->value("documentView/highlightAll", Defaults::DocumentView::highlightAll()).toBool();
 }
 
-void Settings::DocumentView::setHighlightAll(bool highlightAll)
-{
+void Settings::DocumentView::setHighlightAll(bool highlightAll) {
     m_settings->setValue("documentView/highlightAll", highlightAll);
 }
 
@@ -669,8 +565,7 @@ Settings::DocumentView::DocumentView(QSettings *settings) :
     m_limitThumbnailsToResults(Defaults::DocumentView::limitThumbnailsToResults()),
     m_pageSpacing(Defaults::DocumentView::pageSpacing()),
     m_thumbnailSpacing(Defaults::DocumentView::thumbnailSpacing()),
-    m_thumbnailSize(Defaults::DocumentView::thumbnailSize())
-{
+    m_thumbnailSize(Defaults::DocumentView::thumbnailSize()) {
 }
 
 // main window
@@ -1172,8 +1067,13 @@ void Settings::PrintDialog::setNumberUpLayout(PrintOptions::NumberUpLayout numbe
 
 #endif // QT_VERSION
 
-void Settings::sync()
-{
+// read the settings from local file
+// e.g. [.config/qpdfview/qpdfview.conf]
+void Settings::sync() {
+    // Writes any unsaved changes to permanent storage, and reloads any settings that have
+    // been changed in the meantime by another application.
+    // This function is called automatically from QSettings's destructor and by the event
+    // loop at regular intervals, so you normally don't need to call it yourself.
     m_settings->sync();
 
     m_pageItem.sync();
