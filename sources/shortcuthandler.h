@@ -28,11 +28,12 @@ along with qpdfview.  If not, see <http://www.gnu.org/licenses/>.
 
 class QSettings;
 
-namespace qpdfview
-{
+namespace qpdfview {
 
-class ShortcutHandler : public QAbstractTableModel
-{
+// The QAbstractTableModel class provides an abstract model that can be subclassed to create table models.
+// QAbstractTableModel provides a standard interface for models that represent their
+// data as a two-dimensional array of items. It is not used directly, but must be subclassed.
+class ShortcutHandler : public QAbstractTableModel {
     Q_OBJECT
 
 public:
@@ -41,9 +42,13 @@ public:
 
     void registerAction(QAction* action);
 
+    // When subclassing QAbstractTableModel, you must implement rowCount(),
+    // columnCount(), and data().
     int columnCount(const QModelIndex& parent) const;
     int rowCount(const QModelIndex& parent) const;
 
+    // Editable models need to implement setData(), and implement flags() to
+    // return a value containing Qt::ItemIsEditable.
     Qt::ItemFlags flags(const QModelIndex& index) const;
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
@@ -60,7 +65,13 @@ public:
     bool matchesMoveRight(const QKeySequence& keySequence) const;
 
 public slots:
+    // [virtual slot] bool QAbstractItemModel::submit()
+    // Lets the model know that it should submit cached information to permanent storage.
+    // This function is typically used for row editing.
     bool submit();
+    // [virtual slot] void QAbstractItemModel::revert()
+    // Lets the model know that it should discard cached information. This function
+    //is typically used for row editing.
     void revert();
 
     void reset();
@@ -73,9 +84,12 @@ private:
 
     QSettings* m_settings;
 
-    QList< QAction* > m_actions;
+    // The QList class is a template class that provides lists.
+    // QList<T> is one of Qt's generic container classes. It stores
+    // items in a list that provides fast index-based access and index-based insertions and removals.
+    QList<QAction*> m_actions;
 
-    typedef QHash< QAction*, QList< QKeySequence > > Shortcuts;
+    typedef QHash<QAction*, QList<QKeySequence>> Shortcuts;
     Shortcuts m_shortcuts;
     Shortcuts m_defaultShortcuts;
 
