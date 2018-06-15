@@ -30,25 +30,20 @@ along with qpdfview.  If not, see <http://www.gnu.org/licenses/>.
 static inline bool operator<(int page, const QPair< int, QRectF >& result) { return page < result.first; }
 static inline bool operator<(const QPair< int, QRectF >& result, int page) { return result.first < page; }
 
-namespace qpdfview
-{
+namespace qpdfview {
 
 SearchModel* SearchModel::s_instance = 0;
 
-SearchModel* SearchModel::instance()
-{
-    if(s_instance == 0)
-    {
+SearchModel* SearchModel::instance() {
+    if (s_instance == 0) {
         s_instance = new SearchModel(qApp);
     }
 
     return s_instance;
 }
 
-SearchModel::~SearchModel()
-{
-    foreach(TextWatcher* watcher, m_textWatchers)
-    {
+SearchModel::~SearchModel() {
+    foreach (TextWatcher* watcher, m_textWatchers) {
         watcher->waitForFinished();
         watcher->deleteLater();
     }
@@ -77,10 +72,8 @@ QModelIndex SearchModel::index(int row, int column, const QModelIndex& parent) c
     return QModelIndex();
 }
 
-QModelIndex SearchModel::parent(const QModelIndex& child) const
-{
-    if(child.internalPointer() != 0)
-    {
+QModelIndex SearchModel::parent(const QModelIndex& child) const {
+    if (child.internalPointer() != 0) {
         DocumentView* view = static_cast< DocumentView* >(child.internalPointer());
 
         return findView(view);
@@ -89,21 +82,15 @@ QModelIndex SearchModel::parent(const QModelIndex& child) const
     return QModelIndex();
 }
 
-int SearchModel::rowCount(const QModelIndex& parent) const
-{
-    if(!parent.isValid())
-    {
+int SearchModel::rowCount(const QModelIndex& parent) const {
+    if (!parent.isValid()) {
         return m_views.count();
-    }
-    else
-    {
-        if(parent.internalPointer() == 0)
-        {
+    } else {
+        if (parent.internalPointer() == 0) {
             DocumentView* view = m_views.value(parent.row(), 0);
             const Results* results = m_results.value(view, 0);
 
-            if(results != 0)
-            {
+            if (results != 0) {
                 return results->count();
             }
         }
@@ -112,30 +99,24 @@ int SearchModel::rowCount(const QModelIndex& parent) const
     return 0;
 }
 
-int SearchModel::columnCount(const QModelIndex&) const
-{
+int SearchModel::columnCount(const QModelIndex&) const {
     return 1;
 }
 
-QVariant SearchModel::data(const QModelIndex& index, int role) const
-{
-    if(!index.isValid())
-    {
+QVariant SearchModel::data(const QModelIndex& index, int role) const {
+    if (!index.isValid()) {
         return QVariant();
     }
 
-    if(index.internalPointer() == 0)
-    {
+    if (index.internalPointer() == 0) {
         DocumentView* view = m_views.value(index.row(), 0);
         const Results* results = m_results.value(view, 0);
 
-        if(results == 0)
-        {
+        if (results == 0) {
             return QVariant();
         }
 
-        switch(role)
-        {
+        switch (role) {
         default:
             return QVariant();
         case CountRole:
@@ -147,21 +128,17 @@ QVariant SearchModel::data(const QModelIndex& index, int role) const
         case Qt::ToolTipRole:
             return tr("<b>%1</b> occurrences").arg(results->count());
         }
-    }
-    else
-    {
+    } else {
         DocumentView* view = static_cast< DocumentView* >(index.internalPointer());
         const Results* results = m_results.value(view, 0);
 
-        if(results == 0 || index.row() >= results->count())
-        {
+        if (results == 0 || index.row() >= results->count()) {
             return QVariant();
         }
 
         const Result& result = results->at(index.row());
 
-        switch(role)
-        {
+        switch (role) {
         default:
             return QVariant();
         case PageRole:
@@ -408,8 +385,7 @@ SearchModel::SearchModel(QObject* parent) : QAbstractItemModel(parent),
     m_views(),
     m_results(),
     m_textCache(1 << 16),
-    m_textWatchers()
-{
+    m_textWatchers() {
 }
 
 QModelIndex SearchModel::findView(DocumentView *view) const
