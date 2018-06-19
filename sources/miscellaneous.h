@@ -36,13 +36,11 @@ along with qpdfview.  If not, see <http://www.gnu.org/licenses/>.
 
 class QTextLayout;
 
-namespace qpdfview
-{
+namespace qpdfview {
 
 // graphics composition mode effect
 
-class GraphicsCompositionModeEffect : public QGraphicsEffect
-{
+class GraphicsCompositionModeEffect : public QGraphicsEffect {
     Q_OBJECT
 
 public:
@@ -58,8 +56,9 @@ private:
 
 // proxy style
 
-class ProxyStyle : public QProxyStyle
-{
+// The QProxyStyle class is a convenience class that simplifies dynamically
+// overriding QStyle elements.
+class ProxyStyle : public QProxyStyle {
     Q_OBJECT
 
 public:
@@ -68,7 +67,8 @@ public:
     bool scrollableMenus() const;
     void setScrollableMenus(bool scrollableMenus);
 
-    int styleHint(StyleHint hint, const QStyleOption* option, const QWidget* widget, QStyleHintReturn* returnData) const;
+    int styleHint(StyleHint hint, const QStyleOption* option,
+                  const QWidget* widget, QStyleHintReturn* returnData) const;
 
 private:
     Q_DISABLE_COPY(ProxyStyle)

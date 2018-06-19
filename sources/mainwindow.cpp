@@ -2642,15 +2642,12 @@ void MainWindow::dropEvent(QDropEvent* event)
     }
 }
 
-void MainWindow::prepareStyle()
-{
-    if(s_settings->mainWindow().hasIconTheme())
-    {
+void MainWindow::prepareStyle() {
+    if (s_settings->mainWindow().hasIconTheme()) {
         QIcon::setThemeName(s_settings->mainWindow().iconTheme());
     }
 
-    if(s_settings->mainWindow().hasStyleSheet())
-    {
+    if (s_settings->mainWindow().hasStyleSheet()) {
         qApp->setStyleSheet(s_settings->mainWindow().styleSheet());
     }
 
@@ -2658,6 +2655,7 @@ void MainWindow::prepareStyle()
 
     style->setScrollableMenus(s_settings->mainWindow().scrollableMenus());
 
+    // Sets the application's GUI style to style.
     qApp->setStyle(style);
 }
 

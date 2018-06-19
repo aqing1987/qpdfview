@@ -841,23 +841,19 @@ void Settings::MainWindow::setTabContextMenu(const QStringList& tabContextMenu)
     m_settings->setValue("mainWindow/tabContextMenu", trimmed(tabContextMenu));
 }
 
-bool Settings::MainWindow::scrollableMenus() const
-{
+bool Settings::MainWindow::scrollableMenus() const {
     return m_settings->value("mainWindow/scrollableMenus", Defaults::MainWindow::scrollableMenus()).toBool();
 }
 
-void Settings::MainWindow::setScrollableMenus(bool scrollableMenus)
-{
+void Settings::MainWindow::setScrollableMenus(bool scrollableMenus) {
     m_settings->setValue("mainWindow/scrollableMenus", scrollableMenus);
 }
 
-bool Settings::MainWindow::searchableMenus() const
-{
+bool Settings::MainWindow::searchableMenus() const {
     return m_settings->value("mainWindow/searchableMenus", Defaults::MainWindow::searchableMenus()).toBool();
 }
 
-void Settings::MainWindow::setSearchableMenus(bool searchableMenus)
-{
+void Settings::MainWindow::setSearchableMenus(bool searchableMenus) {
     m_settings->setValue("mainWindow/searchableMenus", searchableMenus);
 }
 
@@ -871,23 +867,19 @@ void Settings::MainWindow::setToggleToolAndMenuBarsWithFullscreen(bool toggleToo
     m_settings->setValue("mainWindow/toggleToolAndMenuBarsWithFullscreen", toggleToolAndMenuBarsWithFullscreen);
 }
 
-bool Settings::MainWindow::hasIconTheme() const
-{
+bool Settings::MainWindow::hasIconTheme() const {
     return m_settings->contains("mainWindow/iconTheme");
 }
 
-QString Settings::MainWindow::iconTheme() const
-{
+QString Settings::MainWindow::iconTheme() const {
     return m_settings->value("mainWindow/iconTheme").toString();
 }
 
-bool Settings::MainWindow::hasStyleSheet() const
-{
+bool Settings::MainWindow::hasStyleSheet() const {
     return m_settings->contains("mainWindow/styleSheet");
 }
 
-QString Settings::MainWindow::styleSheet() const
-{
+QString Settings::MainWindow::styleSheet() const {
     return m_settings->value("mainWindow/styleSheet").toString();
 }
 

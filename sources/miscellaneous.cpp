@@ -80,17 +80,14 @@ void GraphicsCompositionModeEffect::draw(QPainter* painter)
 }
 
 ProxyStyle::ProxyStyle() : QProxyStyle(),
-    m_scrollableMenus(false)
-{
+    m_scrollableMenus(false) {
 }
 
-bool ProxyStyle::scrollableMenus() const
-{
+bool ProxyStyle::scrollableMenus() const {
     return m_scrollableMenus;
 }
 
-void ProxyStyle::setScrollableMenus(bool scrollableMenus)
-{
+void ProxyStyle::setScrollableMenus(bool scrollableMenus) {
     m_scrollableMenus = scrollableMenus;
 }
 

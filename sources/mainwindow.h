@@ -50,8 +50,7 @@ class QWidgetAction;
 
 #include "renderparam.h"
 
-namespace qpdfview
-{
+namespace qpdfview {
 
 class Settings;
 class DocumentView;
