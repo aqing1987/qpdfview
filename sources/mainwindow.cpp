@@ -375,6 +375,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent),
 
     prepareStyle();
 
+    // This property holds whether drop events are enabled for this widget.
+    // Setting this property to true announces to the system that this
+    // widget may be able to accept drop events.
     setAcceptDrops(true);
 
     createWidgets();
@@ -2952,8 +2955,7 @@ void MainWindow::scheduleSavePerFileSettings()
     }
 }
 
-void MainWindow::createWidgets()
-{
+void MainWindow::createWidgets() {
     m_tabWidget = new TabWidget(this);
 
     m_tabWidget->setDocumentMode(true);

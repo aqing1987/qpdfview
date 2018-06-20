@@ -33,6 +33,7 @@ For example, if one wants to build the program without support for CUPS and Post
 
 The fallback and application-specific icons are derived from the Tango icon theme available at "http://tango.freedesktop.org".
 
+# Notice
 qpdfview.pro is the ENTRANCE
 
 

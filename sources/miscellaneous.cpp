@@ -205,20 +205,17 @@ void SearchableMenu::keyPressEvent(QKeyEvent* event)
 }
 
 TabBar::TabBar(QWidget* parent) : QTabBar(parent),
-    m_dragIndex(-1)
-{
+    m_dragIndex(-1) {
 }
 
-QSize TabBar::tabSizeHint(int index) const
-{
+QSize TabBar::tabSizeHint(int index) const {
+
     QSize size = QTabBar::tabSizeHint(index);
 
     const TabWidget* tabWidget = qobject_cast< TabWidget* >(parentWidget());
 
-    if(tabWidget != 0 && tabWidget->spreadTabs())
-    {
-        switch(tabWidget->tabPosition())
-        {
+    if (tabWidget != 0 && tabWidget->spreadTabs()) {
+        switch(tabWidget->tabPosition()) {
         default:
         case QTabWidget::North:
         case QTabWidget::South:
@@ -234,26 +231,22 @@ QSize TabBar::tabSizeHint(int index) const
     return size;
 }
 
-void TabBar::mousePressEvent(QMouseEvent* event)
-{
-    if(event->button() == Qt::MidButton)
-    {
+void TabBar::mousePressEvent(QMouseEvent* event) {
+    if (event->button() == Qt::MidButton) {
         const int index = tabAt(event->pos());
 
-        if(index != -1)
-        {
+        if (index != -1) {
             emit tabCloseRequested(index);
 
             event->accept();
             return;
         }
-    }
-    else if(event->modifiers() == Qt::ShiftModifier && event->button() == Qt::LeftButton)
-    {
+    } else if (event->modifiers() == Qt::ShiftModifier
+               && event->button() == Qt::LeftButton) {
+
         const int index = tabAt(event->pos());
 
-        if(index != -1)
-        {
+        if (index != -1) {
             m_dragIndex = index;
             m_dragPos = event->pos();
 
@@ -265,14 +258,12 @@ void TabBar::mousePressEvent(QMouseEvent* event)
     QTabBar::mousePressEvent(event);
 }
 
-void TabBar::mouseMoveEvent(QMouseEvent* event)
-{
+void TabBar::mouseMoveEvent(QMouseEvent* event) {
     QTabBar::mouseMoveEvent(event);
 
-    if(m_dragIndex != -1)
-    {
-        if((event->pos() - m_dragPos).manhattanLength() >= QApplication::startDragDistance())
-        {
+    if (m_dragIndex != -1) {
+        if ((event->pos() - m_dragPos).manhattanLength() >=
+                QApplication::startDragDistance()) {
             emit tabDragRequested(m_dragIndex);
 
             m_dragIndex = -1;
@@ -280,8 +271,7 @@ void TabBar::mouseMoveEvent(QMouseEvent* event)
     }
 }
 
-void TabBar::mouseReleaseEvent(QMouseEvent* event)
-{
+void TabBar::mouseReleaseEvent(QMouseEvent* event) {
     QTabBar::mouseReleaseEvent(event);
 
     m_dragIndex = -1;
@@ -289,21 +279,26 @@ void TabBar::mouseReleaseEvent(QMouseEvent* event)
 
 TabWidget::TabWidget(QWidget* parent) : QTabWidget(parent),
     m_tabBarPolicy(TabBarAsNeeded),
-    m_spreadTabs(false)
-{
+    m_spreadTabs(false) {
+
     TabBar* tabBar = new TabBar(this);
 
+    // This property holds how the widget shows a context menu.
     tabBar->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    // inline QMetaObject::Connection QObject::connect(const QObject *asender,
+    // const char *asignal, const char *amember, Qt::ConnectionType atype) const
+    // { return connect(asender, asignal, this, amember, atype); }
     connect(tabBar, SIGNAL(tabDragRequested(int)), SIGNAL(tabDragRequested(int)));
     connect(tabBar, SIGNAL(customContextMenuRequested(QPoint)), SLOT(on_tabBar_customContextMenuRequested(QPoint)));
 
+    // Replaces the dialog's QTabBar heading with the tab bar tb.
+    // Note that this must be called before any tabs have been added, or the behavior is undefined.
     setTabBar(tabBar);
 }
 
 int TabWidget::addTab(QWidget* const widget, const bool nextToCurrent,
-                      const QString& label, const QString& toolTip)
-{
+                      const QString& label, const QString& toolTip) {
     const int index = nextToCurrent
             ? insertTab(currentIndex() + 1, widget, label)
             : QTabWidget::addTab(widget, label);
