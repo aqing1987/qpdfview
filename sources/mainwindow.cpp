@@ -420,17 +420,19 @@ QMenu* MainWindow::createPopupMenu()
     return menu;
 }
 
-void MainWindow::show()
-{
+void MainWindow::show() {
     QMainWindow::show();
 
-    if(s_settings->mainWindow().restoreTabs())
-    {
+    if (s_settings->mainWindow().restoreTabs()) {
         s_database->restoreTabs(RestoreTab(this));
+
+        const int currentTabIndex =
+            s_settings->mainWindow().currentTabIndex();
+        if (currentTabIndex != -1)
+          m_tabWidget->setCurrentIndex(currentTabIndex);
     }
 
-    if(s_settings->mainWindow().restoreBookmarks())
-    {
+    if (s_settings->mainWindow().restoreBookmarks()) {
         s_database->restoreBookmarks();
     }
 }
@@ -2518,22 +2520,19 @@ void MainWindow::on_search_rowsInserted(const QModelIndex& parent, int first, in
     }
 }
 
-void MainWindow::on_saveDatabase_timeout()
-{
-    if(s_settings->mainWindow().restoreTabs())
-    {
+void MainWindow::on_saveDatabase_timeout() {
+    if (s_settings->mainWindow().restoreTabs()) {
         s_database->saveTabs(allTabs());
+
+        s_settings->mainWindow().setCurrentTabIndex(m_tabWidget->currentIndex());
     }
 
-    if(s_settings->mainWindow().restoreBookmarks())
-    {
+    if (s_settings->mainWindow().restoreBookmarks()) {
         s_database->saveBookmarks();
     }
 
-    if(s_settings->mainWindow().restorePerFileSettings())
-    {
-        foreach(DocumentView* tab, allTabs())
-        {
+    if (s_settings->mainWindow().restorePerFileSettings()) {
+        foreach (DocumentView* tab, allTabs()) {
             s_database->savePerFileSettings(tab);
         }
     }
@@ -2567,16 +2566,12 @@ bool MainWindow::eventFilter(QObject* target, QEvent* event)
     return QMainWindow::eventFilter(target, event);
 }
 
-void MainWindow::closeEvent(QCloseEvent* event)
-{
+void MainWindow::closeEvent(QCloseEvent* event) {
     m_searchDock->setVisible(false);
 
-    for(int index = 0, count = m_tabWidget->count(); index < count; ++index)
-    {
-        foreach(DocumentView* tab, allTabs(index))
-        {
-            if(!saveModifications(tab))
-            {
+    for (int index = 0, count = m_tabWidget->count(); index < count; ++index) {
+        foreach (DocumentView* tab, allTabs(index)) {
+            if (!saveModifications(tab)) {
                 m_tabWidget->setCurrentIndex(index);
                 tab->setFocus();
 
@@ -2586,21 +2581,17 @@ void MainWindow::closeEvent(QCloseEvent* event)
         }
     }
 
-    if(s_settings->mainWindow().restoreTabs())
-    {
+    if (s_settings->mainWindow().restoreTabs()) {
         s_database->saveTabs(allTabs());
-    }
-    else
-    {
+
+        s_settings->mainWindow().setCurrentTabIndex(m_tabWidget->currentIndex());
+    } else {
         s_database->clearTabs();
     }
 
-    if(s_settings->mainWindow().restoreBookmarks())
-    {
+    if (s_settings->mainWindow().restoreBookmarks()) {
         s_database->saveBookmarks();
-    }
-    else
-    {
+    } else {
         s_database->clearBookmarks();
     }
 

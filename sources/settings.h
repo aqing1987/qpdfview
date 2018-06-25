@@ -332,6 +332,9 @@ public:
         int saveDatabaseInterval() const;
         void setSaveDatabaseInterval(int saveDatabaseInterval);
 
+        int currentTabIndex() const;
+        void setCurrentTabIndex(int currentTabIndex);
+
         int tabPosition() const;
         void setTabPosition(int tabPosition);
 
