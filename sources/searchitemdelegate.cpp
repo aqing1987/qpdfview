@@ -28,16 +28,21 @@ along with qpdfview.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "searchmodel.h"
 
-namespace qpdfview
-{
+namespace qpdfview {
 
 SearchItemDelegate::SearchItemDelegate(QObject* parent) : QStyledItemDelegate(parent)
 {
 }
 
-void SearchItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
+void SearchItemDelegate::paint(QPainter* painter,
+                               const QStyleOptionViewItem& option,
+                               const QModelIndex& index) const {
+
     QStyledItemDelegate::paint(painter, option, index);
+
+    if (index.column() != 0) {
+      return;
+    }
 
     const int progress = index.data(SearchModel::ProgressRole).toInt();
 

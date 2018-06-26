@@ -126,10 +126,9 @@ inline void setToolButtonMenu(QToolBar* toolBar, QAction* action, QMenu* menu)
     }
 }
 
-inline void setSectionResizeMode(QHeaderView* header, QHeaderView::ResizeMode mode)
-{
-    if(header->count() > 0)
-    {
+inline void setSectionResizeMode(QHeaderView* header,
+                                 QHeaderView::ResizeMode mode) {
+    if (header->count() > 0) {
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 
         header->setSectionResizeMode(mode);
@@ -142,10 +141,10 @@ inline void setSectionResizeMode(QHeaderView* header, QHeaderView::ResizeMode mo
     }
 }
 
-inline void setSectionResizeMode(QHeaderView* header, int index, QHeaderView::ResizeMode mode)
-{
-    if(header->count() > index)
-    {
+inline void setSectionResizeMode(QHeaderView* header,
+                                 int index,
+                                 QHeaderView::ResizeMode mode) {
+    if (header->count() > index) {
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 
         header->setSectionResizeMode(index, mode);
@@ -2409,9 +2408,9 @@ void MainWindow::on_bookmarks_contextMenuRequested(QPoint pos)
     }
 }
 
-void MainWindow::on_search_sectionCountChanged()
-{
+void MainWindow::on_search_sectionCountChanged() {
     setSectionResizeMode(m_searchView->header(), 0, QHeaderView::Stretch);
+    setSectionResizeMode(m_searchView->header(), 1, QHeaderView::ResizeToContents);
 
     m_searchView->header()->setMinimumSectionSize(0);
     m_searchView->header()->setStretchLastSection(false);

@@ -85,14 +85,12 @@ QModelIndex SearchModel::parent(const QModelIndex& child) const {
 int SearchModel::rowCount(const QModelIndex& parent) const {
     if (!parent.isValid()) {
         return m_views.count();
-    } else {
-        if (parent.internalPointer() == 0) {
-            DocumentView* view = m_views.value(parent.row(), 0);
-            const Results* results = m_results.value(view, 0);
+    } else if (parent.internalPointer() == 0) {
+        DocumentView* view = m_views.value(parent.row(), 0);
+        const Results* results = m_results.value(view, 0);
 
-            if (results != 0) {
-                return results->count();
-            }
+        if (results != 0) {
+            return results->count();
         }
     }
 
@@ -100,7 +98,7 @@ int SearchModel::rowCount(const QModelIndex& parent) const {
 }
 
 int SearchModel::columnCount(const QModelIndex&) const {
-    return 1;
+    return 2;
 }
 
 QVariant SearchModel::data(const QModelIndex& index, int role) const {
@@ -123,8 +121,14 @@ QVariant SearchModel::data(const QModelIndex& index, int role) const {
             return results->count();
         case ProgressRole:
             return view->searchProgress();
-        case Qt::DisplayRole:
-            return view->title();
+        case Qt::DisplayRole: // The key data to be rendered in the form of text.
+            switch (index.column()) {
+            case 0:
+                return view->title();
+            case 1:
+                return results->count();
+            }
+
         case Qt::ToolTipRole:
             return tr("<b>%1</b> occurrences").arg(results->count());
         }
@@ -155,6 +159,14 @@ QVariant SearchModel::data(const QModelIndex& index, int role) const {
             return fetchMatchedText(view, result);
         case SurroundingTextRole:
             return fetchSurroundingText(view, result);
+        case Qt::DisplayRole:
+            switch (index.column()) {
+            case 0:
+                return QVariant();
+            case 1:
+                return result.first;
+            }
+
         case Qt::ToolTipRole:
             return tr("<b>%1</b> occurrences on page <b>%2</b>").arg(numberOfResultsOnPage(view, result.first)).arg(result.first);
         }
