@@ -1636,12 +1636,10 @@ void MainWindow::on_addAnnotationMode_triggered(bool checked)
     currentTab()->setRubberBandMode(checked ? AddAnnotationMode : ModifiersMode);
 }
 
-void MainWindow::on_settings_triggered()
-{
+void MainWindow::on_settings_triggered() {
     QScopedPointer< SettingsDialog > settingsDialog(new SettingsDialog(this));
 
-    if(settingsDialog->exec() != QDialog::Accepted)
-    {
+    if (settingsDialog->exec() != QDialog::Accepted) {
         return;
     }
 
@@ -1654,12 +1652,8 @@ void MainWindow::on_settings_triggered()
     m_tabsMenu->setSearchable(s_settings->mainWindow().searchableMenus());
     m_bookmarksMenu->setSearchable(s_settings->mainWindow().searchableMenus());
 
-    m_saveDatabaseTimer->setInterval(s_settings->mainWindow().saveDatabaseInterval());
-
-    foreach(DocumentView* tab, allTabs())
-    {
-        if(!tab->refresh())
-        {
+    foreach (DocumentView* tab, allTabs()) {
+        if (!tab->refresh()) {
             QMessageBox::warning(this, tr("Warning"), tr("Could not refresh '%1'.").arg(currentTab()->fileInfo().filePath()));
         }
     }
@@ -2899,48 +2893,40 @@ QAction* MainWindow::sourceLinkActionForCurrentTab(QObject* parent, QPoint pos)
     return action;
 }
 
-void MainWindow::prepareDatabase()
-{
-    if(s_database == 0)
-    {
+void MainWindow::prepareDatabase() {
+    if (s_database == 0) {
         s_database = Database::instance();
     }
 
     m_saveDatabaseTimer = new QTimer(this);
+    // A single-shot timer fires only once, non-single-shot timers fire every interval milliseconds.
     m_saveDatabaseTimer->setSingleShot(true);
-    m_saveDatabaseTimer->setInterval(s_settings->mainWindow().saveDatabaseInterval());
 
     connect(m_saveDatabaseTimer, SIGNAL(timeout()), SLOT(on_saveDatabase_timeout()));
 }
 
-void MainWindow::scheduleSaveDatabase()
-{
-    if(!m_saveDatabaseTimer->isActive() && m_saveDatabaseTimer->interval() > 0)
-    {
-        m_saveDatabaseTimer->start();
+void MainWindow::scheduleSaveDatabase() {
+    const int interval = s_settings->mainWindow().saveDatabaseInterval();
+
+    if (!m_saveDatabaseTimer->isActive() && interval >= 0) {
+        m_saveDatabaseTimer->start(interval);
     }
 }
 
-void MainWindow::scheduleSaveTabs()
-{
-    if(s_settings->mainWindow().restoreTabs())
-    {
+void MainWindow::scheduleSaveTabs() {
+    if (s_settings->mainWindow().restoreTabs()) {
         scheduleSaveDatabase();
     }
 }
 
-void MainWindow::scheduleSaveBookmarks()
-{
-    if(s_settings->mainWindow().restoreBookmarks())
-    {
+void MainWindow::scheduleSaveBookmarks() {
+    if (s_settings->mainWindow().restoreBookmarks()) {
         scheduleSaveDatabase();
     }
 }
 
-void MainWindow::scheduleSavePerFileSettings()
-{
-    if(s_settings->mainWindow().restorePerFileSettings())
-    {
+void MainWindow::scheduleSavePerFileSettings() {
+    if (s_settings->mainWindow().restorePerFileSettings()) {
         scheduleSaveDatabase();
     }
 }

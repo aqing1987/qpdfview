@@ -41,8 +41,7 @@ along with qpdfview.  If not, see <http://www.gnu.org/licenses/>.
 #include "documentview.h"
 #include "miscellaneous.h"
 
-namespace
-{
+namespace {
 
 using namespace qpdfview;
 
@@ -239,8 +238,7 @@ void SettingsDialog::resetCurrentTab()
     }
 }
 
-void SettingsDialog::createBehaviorTab()
-{
+void SettingsDialog::createBehaviorTab() {
     m_openUrlCheckBox = addCheckBox(m_behaviorLayout, tr("Open URL:"), QString(),
                                     s_settings->documentView().openUrl());
 
@@ -266,7 +264,7 @@ void SettingsDialog::createBehaviorTab()
                                                    s_settings->mainWindow().restorePerFileSettings());
 
     m_saveDatabaseInterval = addSpinBox(m_behaviorLayout, tr("Save database interval:"), QString(), tr(" min"), tr("Never"),
-                                        0, 60, 1, s_settings->mainWindow().saveDatabaseInterval() / 1000 / 60);
+                                        -1, 60, 1, s_settings->mainWindow().saveDatabaseInterval() / 1000 / 60);
 
 #ifndef WITH_SQL
 
@@ -764,8 +762,9 @@ QLineEdit* SettingsDialog::addLineEdit(QFormLayout* layout, const QString& label
     return lineEdit;
 }
 
-QSpinBox* SettingsDialog::addSpinBox(QFormLayout* layout, const QString& label, const QString& toolTip, const QString& suffix, const QString& special, int min, int max, int step, int val)
-{
+QSpinBox* SettingsDialog::addSpinBox(QFormLayout* layout, const QString& label,
+                                     const QString& toolTip, const QString& suffix,
+                                     const QString& special, int min, int max, int step, int val) {
     QSpinBox* spinBox = new QSpinBox(this);
     spinBox->setRange(min, max);
     spinBox->setSingleStep(step);
