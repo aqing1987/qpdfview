@@ -37,11 +37,9 @@ class QStandardItemModel;
 #include "renderparam.h"
 #include "printoptions.h"
 
-namespace qpdfview
-{
+namespace qpdfview {
 
-namespace Model
-{
+namespace Model {
 class Annotation;
 class Page;
 class Document;
@@ -56,8 +54,7 @@ class PresentationView;
 class ShortcutHandler;
 struct DocumentLayout;
 
-class DocumentView : public QGraphicsView
-{
+class DocumentView : public QGraphicsView {
     Q_OBJECT
 
 public:
@@ -149,17 +146,17 @@ public:
 
     QPair< QString, QString > searchContext(int page, const QRectF& rect) const;
 
+    bool hasSearchResults();
+
     QString resolveFileName(QString fileName) const;
     QUrl resolveUrl(QUrl url) const;
 
-    struct SourceLink
-    {
+    struct SourceLink {
         QString name;
         int line;
         int column;
 
         operator bool() const { return !name.isNull(); }
-
     };
 
     SourceLink sourceLink(QPoint pos);

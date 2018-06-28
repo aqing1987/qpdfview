@@ -68,8 +68,7 @@ along with qpdfview.  If not, see <http://www.gnu.org/licenses/>.
 #include "miscellaneous.h"
 #include "documentlayout.h"
 
-namespace
-{
+namespace {
 
 using namespace qpdfview;
 
@@ -1288,10 +1287,8 @@ bool DocumentView::searchWholeWords() const
     return m_searchTask->wholeWords();
 }
 
-QPair< QString, QString > DocumentView::searchContext(int page, const QRectF& rect) const
-{
-    if(page < 1 || page > m_pages.size() || rect.isEmpty())
-    {
+QPair<QString, QString> DocumentView::searchContext(int page, const QRectF& rect) const {
+    if (page < 1 || page > m_pages.size() || rect.isEmpty()) {
         return qMakePair(QString(), QString());
     }
 
@@ -1306,6 +1303,10 @@ QPair< QString, QString > DocumentView::searchContext(int page, const QRectF& re
     const QString& surroundingText = m_pages.at(page - 1)->cachedText(surroundingRect);
 
     return qMakePair(matchedText, surroundingText);
+}
+
+bool DocumentView::hasSearchResults() {
+    return s_searchModel->hasResults(this);
 }
 
 QString DocumentView::resolveFileName(QString fileName) const
