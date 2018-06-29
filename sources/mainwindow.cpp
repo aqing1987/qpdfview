@@ -1,7 +1,8 @@
 /*
 
 Copyright 2014-2015 S. Razi Alavizadeh
-Copyright 2012-2017 Adam Reichold
+Copyright 2012-2018 Adam Reichold
+Copyright 2018 Pavel Sanda
 Copyright 2014 Dorian Scholz
 Copyright 2012 Michał Trybus
 Copyright 2012 Alexander Volkov
@@ -192,16 +193,13 @@ void addWidgetActions(QWidget* widget, const QStringList& actionNames, const QLi
     }
 }
 
-class SignalBlocker
-{
+class SignalBlocker {
 public:
-    SignalBlocker(QObject* object) : m_object(object)
-    {
+    SignalBlocker(QObject* object) : m_object(object) {
         m_object->blockSignals(true);
     }
 
-    ~SignalBlocker()
-    {
+    ~SignalBlocker() {
         m_object->blockSignals(false);
     }
 
@@ -640,6 +638,7 @@ void MainWindow::on_tabWidget_currentChanged() {
     m_highlightAllCheckBox->setEnabled(hasCurrent);
 
     m_openCopyInNewTabAction->setEnabled(hasCurrent);
+    m_openCopyInNewWindowAction->setEnabled(hasCurrent);
     m_openContainingFolderAction->setEnabled(hasCurrent);
     m_moveToInstanceAction->setEnabled(hasCurrent);
     m_splitViewHorizontallyAction->setEnabled(hasCurrent);
@@ -755,12 +754,12 @@ void MainWindow::on_tabWidget_tabDragRequested(int index)
     drag->exec();
 }
 
-void MainWindow::on_tabWidget_tabContextMenuRequested(QPoint globalPos, int index)
-{
+void MainWindow::on_tabWidget_tabContextMenuRequested(QPoint globalPos, int index) {
     QMenu menu;
 
     // We block their signals since we need to handle them using the selected instead of the current tab.
     SignalBlocker openCopyInNewTabSignalBlocker(m_openCopyInNewTabAction);
+    SignalBlocker openCopyInNewWindowSignalBlocker(m_openCopyInNewWindowAction);
     SignalBlocker openContainingFolderSignalBlocker(m_openContainingFolderAction);
     SignalBlocker moveToInstanceSignalBlocker(m_moveToInstanceAction);
     SignalBlocker splitViewHorizontallySignalBlocker(m_splitViewHorizontallyAction);
@@ -779,7 +778,7 @@ void MainWindow::on_tabWidget_tabContextMenuRequested(QPoint globalPos, int inde
 
     QList< QAction* > actions;
 
-    actions << m_openCopyInNewTabAction << m_openContainingFolderAction << m_moveToInstanceAction
+    actions << m_openCopyInNewTabAction << m_openCopyInNewWindowAction << m_openContainingFolderAction << m_moveToInstanceAction
             << m_splitViewHorizontallyAction << m_splitViewVerticallyAction << m_closeCurrentViewAction
             << copyFilePathAction << selectFilePathAction
             << closeAllTabsAction << closeAllTabsButThisOneAction
@@ -791,52 +790,31 @@ void MainWindow::on_tabWidget_tabContextMenuRequested(QPoint globalPos, int inde
 
     DocumentView* const tab = currentTab(index);
 
-    if(action == m_openCopyInNewTabAction)
-    {
+    if (action == m_openCopyInNewTabAction) {
         on_openCopyInNewTab_triggered(tab);
-    }
-    else if(action == m_openContainingFolderAction)
-    {
+    } else if (action == m_openCopyInNewWindowAction) {
+        on_openCopyInNewWindow_triggered(tab);
+    } else if(action == m_openContainingFolderAction) {
         on_openContainingFolder_triggered(tab);
-    }
-    else if(action == m_moveToInstanceAction)
-    {
+    } else if(action == m_moveToInstanceAction) {
         on_moveToInstance_triggered(tab);
-    }
-    else if(action == m_splitViewHorizontallyAction)
-    {
+    } else if(action == m_splitViewHorizontallyAction) {
         on_splitView_split_triggered(Qt::Horizontal, index);
-    }
-    else if(action == m_splitViewVerticallyAction)
-    {
+    } else if(action == m_splitViewVerticallyAction) {
         on_splitView_split_triggered(Qt::Vertical, index);
-    }
-    else if(action == m_closeCurrentViewAction)
-    {
+    } else if(action == m_closeCurrentViewAction) {
         on_splitView_closeCurrent_triggered(index);
-    }
-    else if(action == copyFilePathAction)
-    {
+    } else if(action == copyFilePathAction) {
         QApplication::clipboard()->setText(tab->fileInfo().absoluteFilePath());
-    }
-    else if(action == selectFilePathAction)
-    {
+    } else if(action == selectFilePathAction) {
         QApplication::clipboard()->setText(tab->fileInfo().absoluteFilePath(), QClipboard::Selection);
-    }
-    else if(action == closeAllTabsAction)
-    {
+    } else if(action == closeAllTabsAction) {
         on_closeAllTabs_triggered();
-    }
-    else if(action == closeAllTabsButThisOneAction)
-    {
+    } else if(action == closeAllTabsButThisOneAction) {
         on_closeAllTabsButThisOne_triggered(index);
-    }
-    else if(action == closeAllTabsToTheLeftAction)
-    {
+    } else if(action == closeAllTabsToTheLeftAction) {
         on_closeAllTabsToTheLeft_triggered(index);
-    }
-    else if(action == closeAllTabsToTheRightAction)
-    {
+    } else if(action == closeAllTabsToTheRightAction) {
         on_closeAllTabsToTheRight_triggered(index);
     }
 }
@@ -1123,8 +1101,7 @@ void MainWindow::on_currentTab_searchProgressChanged(int progress)
     m_searchLineEdit->setProgress(progress);
 }
 
-void MainWindow::on_currentTab_customContextMenuRequested(QPoint pos)
-{
+void MainWindow::on_currentTab_customContextMenuRequested(QPoint pos) {
     ONLY_IF_SENDER_IS_CURRENT_TAB
 
     QMenu menu;
@@ -1133,7 +1110,7 @@ void MainWindow::on_currentTab_customContextMenuRequested(QPoint pos)
 
     QList< QAction* > actions;
 
-    actions << m_openCopyInNewTabAction << m_openContainingFolderAction << m_moveToInstanceAction
+    actions << m_openCopyInNewTabAction << m_openCopyInNewWindowAction << m_openContainingFolderAction << m_moveToInstanceAction
             << m_splitViewHorizontallyAction << m_splitViewVerticallyAction << m_closeCurrentViewAction
             << m_previousPageAction << m_nextPageAction
             << m_firstPageAction << m_lastPageAction
@@ -1349,23 +1326,27 @@ void MainWindow::on_openInNewTab_triggered()
     }
 }
 
-void MainWindow::on_openCopyInNewTab_triggered()
-{
+void MainWindow::on_openCopyInNewTab_triggered() {
     on_openCopyInNewTab_triggered(currentTab());
 }
 
-void MainWindow::on_openCopyInNewTab_triggered(const DocumentView* tab)
-{
+void MainWindow::on_openCopyInNewTab_triggered(const DocumentView* tab) {
     openInNewTab(tab->fileInfo().filePath(), tab->currentPage());
 }
 
-void MainWindow::on_openContainingFolder_triggered()
-{
+void MainWindow::on_openCopyInNewWindow_triggered() {
+    on_openCopyInNewWindow_triggered(currentTab());
+}
+
+void MainWindow::on_openCopyInNewWindow_triggered(const DocumentView* tab) {
+    openInNewWindow(tab->fileInfo().filePath(), tab->currentPage());
+}
+
+void MainWindow::on_openContainingFolder_triggered() {
     on_openContainingFolder_triggered(currentTab());
 }
 
-void MainWindow::on_openContainingFolder_triggered(const DocumentView* tab)
-{
+void MainWindow::on_openContainingFolder_triggered(const DocumentView* tab) {
     QDesktopServices::openUrl(QUrl::fromLocalFile(tab->fileInfo().absolutePath()));
 }
 
@@ -3055,8 +3036,7 @@ inline QAction* MainWindow::createAction(const QString& text, const QString& obj
     return createAction(text, objectName, iconName, QList< QKeySequence >() << shortcut, member, checkable, checked);
 }
 
-void MainWindow::createActions()
-{
+void MainWindow::createActions() {
     // file
 
     m_openAction = createAction(tr("&Open..."), QLatin1String("open"), QLatin1String("document-open"), QKeySequence::Open, SLOT(on_open_triggered()));
@@ -3174,6 +3154,7 @@ void MainWindow::createActions()
     // context
 
     m_openCopyInNewTabAction = createAction(tr("Open &copy in new tab"), QLatin1String("openCopyInNewTab"), QLatin1String("tab-new"), QKeySequence(), SLOT(on_openCopyInNewTab_triggered()));
+    m_openCopyInNewWindowAction = createAction(tr("Open copy in new &window"), QLatin1String("openCopyInNewWindow"), QLatin1String("window-new"), QKeySequence(), SLOT(on_openCopyInNewWindow_triggered()));
     m_openContainingFolderAction = createAction(tr("Open containing &folder"), QLatin1String("openContainingFolder"), QLatin1String("folder"), QKeySequence(), SLOT(on_openContainingFolder_triggered()));
     m_moveToInstanceAction = createAction(tr("Move to &instance..."), QLatin1String("moveToInstance"), QIcon(), QKeySequence(), SLOT(on_moveToInstance_triggered()));
     m_splitViewHorizontallyAction = createAction(tr("Split view horizontally..."), QLatin1String("splitViewHorizontally"), QIcon(), QKeySequence(), SLOT(on_splitView_splitHorizontally_triggered()));

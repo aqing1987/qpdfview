@@ -833,13 +833,11 @@ QStringList Settings::MainWindow::documentContextMenu() const
     return m_settings->value("mainWindow/documentContextMenu", Defaults::MainWindow::documentContextMenu()).toStringList();
 }
 
-void Settings::MainWindow::setDocumentContextMenu(const QStringList& documentContextMenu)
-{
+void Settings::MainWindow::setDocumentContextMenu(const QStringList& documentContextMenu) {
     m_settings->setValue("mainWindow/documentContextMenu", trimmed(documentContextMenu));
 }
 
-QStringList Settings::MainWindow::tabContextMenu() const
-{
+QStringList Settings::MainWindow::tabContextMenu() const {
     return m_settings->value("mainWindow/tabContextMenu", Defaults::MainWindow::tabContexntMenu()).toStringList();
 }
 

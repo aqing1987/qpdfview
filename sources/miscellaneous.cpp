@@ -1,7 +1,8 @@
 /*
 
 Copyright 2014 S. Razi Alavizadeh
-Copyright 2012-2017 Adam Reichold
+Copyright 2012-2018 Adam Reichold
+Copyright 2018 Pavel Sanda
 Copyright 2014 Dorian Scholz
 
 This file is part of qpdfview.
@@ -30,6 +31,7 @@ along with qpdfview.  If not, see <http://www.gnu.org/licenses/>.
 #include <QLabel>
 #include <QMenu>
 #include <QMouseEvent>
+#include <QProcess>
 #include <QScrollBar>
 #include <QTimer>
 #include <QToolTip>
@@ -37,11 +39,9 @@ along with qpdfview.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "searchmodel.h"
 
-namespace qpdfview
-{
+namespace qpdfview {
 
-namespace
-{
+namespace {
 
 inline bool isPrintable(const QString& string)
 {
@@ -957,17 +957,29 @@ void Splitter::setUniformSizes()
     setSizes(sizes);
 }
 
-void Splitter::on_focusChanged(QWidget* /* old */, QWidget* now)
-{
-    for(QWidget* currentWidget = now; currentWidget != 0; currentWidget = currentWidget->parentWidget())
-    {
-        if(currentWidget->parentWidget() == this)
-        {
+void Splitter::on_focusChanged(QWidget* /* old */, QWidget* now) {
+    for (QWidget* currentWidget = now;
+         currentWidget != 0;
+         currentWidget = currentWidget->parentWidget()) {
+
+        if (currentWidget->parentWidget() == this) {
             setCurrentWidget(currentWidget);
 
             return;
         }
     }
+}
+
+void openInNewWindow(const QString& filePath, int page) {
+    // The QProcess class is used to start external programs and to communicate with them.
+
+    // bool QProcess::startDetached(const QString &program, const QStringList &arguments,
+    // const QString &workingDirectory = QString(), qint64 *pid = Q_NULLPTR)
+    // Starts the program program with the arguments arguments in a new process, and detaches
+    // from it. Returns true on success; otherwise returns false. If the calling process exits,
+    // the detached process will continue to run unaffected.
+    QProcess::startDetached(QApplication::applicationFilePath(),
+                            QStringList() << QString("%2#%1").arg(page).arg(filePath));
 }
 
 } // qpdfview
