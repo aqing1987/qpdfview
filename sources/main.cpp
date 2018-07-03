@@ -426,6 +426,8 @@ int main(int argc, char** argv) {
     prepareSignalHandler();
 
     mainWindow->show();
+    // Makes Qt delete this widget when the widget has accepted the close event
+    // (see QWidget::closeEvent()).
     mainWindow->setAttribute(Qt::WA_DeleteOnClose);
 
     foreach(const File& file, files) {
