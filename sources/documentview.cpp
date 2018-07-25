@@ -622,9 +622,9 @@ void addFileProperties(Model::Properties& properties, const QFileInfo& fileInfo)
     addProperty(properties, "File group", fileInfo.owner());
 }
 
-void saveExpandedPaths(const QAbstractItemModel* model, QSet< QString >& paths, const QModelIndex& index, QString path)
-{
-    path += index.data(Qt::DisplayRole).toString();
+void saveExpandedPaths(const QAbstractItemModel* model, QSet< QByteArray >& paths, const QModelIndex& index, QByteArray path)
+{    
+    path.append(index.data(Qt::DisplayRole).toByteArray()).append('\0');
 
     if(model->data(index, Model::Document::ExpansionRole).toBool())
     {
@@ -637,9 +637,9 @@ void saveExpandedPaths(const QAbstractItemModel* model, QSet< QString >& paths, 
     }
 }
 
-void restoreExpandedPaths(QAbstractItemModel* model, const QSet< QString >& paths, const QModelIndex& index, QString path)
-{
-    path += index.data(Qt::DisplayRole).toString();
+void restoreExpandedPaths(QAbstractItemModel* model, const QSet< QByteArray >& paths, const QModelIndex& index, QByteArray path)
+{    
+    path.append(index.data(Qt::DisplayRole).toByteArray()).append('\0');
 
     if(paths.contains(path))
     {
@@ -1257,15 +1257,14 @@ void DocumentView::setThumbnailsOrientation(Qt::Orientation thumbnailsOrientatio
     }
 }
 
-QSet<QString> DocumentView::saveOutline() const {
-    QSet<QString> paths;
-    saveExpandedPaths(m_outlineModel.data(), paths, QModelIndex(), QString());
+QSet<QByteArray> DocumentView::saveOutline() const {
+    QSet<QByteArray> paths;
+    saveExpandedPaths(m_outlineModel.data(), paths, QModelIndex(), QByteArray());
     return paths;
 }
 
-void DocumentView::restoreOutline(QSet<QString>& paths) {
-    restoreExpandedPaths(m_outlineModel.data(), paths, QModelIndex(), QString());
-    refresh();
+void DocumentView::restoreOutline(const QSet<QByteArray>& paths) {
+    restoreExpandedPaths(m_outlineModel.data(), paths, QModelIndex(), QByteArray());
 }
 
 QAbstractItemModel* DocumentView::fontsModel() const
@@ -1460,12 +1459,12 @@ bool DocumentView::refresh()
 
         m_currentPage = qMin(m_currentPage, document->numberOfPages());
 
-        QSet< QString > expandedPaths;
-        saveExpandedPaths(m_outlineModel.data(), expandedPaths, QModelIndex(), QString());
+        QSet< QByteArray > expandedPaths;
+        saveExpandedPaths(m_outlineModel.data(), expandedPaths, QModelIndex(), QByteArray());
 
         prepareDocument(document, pages);
 
-        restoreExpandedPaths(m_outlineModel.data(), expandedPaths, QModelIndex(), QString());
+        restoreExpandedPaths(m_outlineModel.data(), expandedPaths, QModelIndex(), QByteArray());
 
         prepareScene();
         prepareView(left, top);
