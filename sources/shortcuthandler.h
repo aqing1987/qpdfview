@@ -89,7 +89,7 @@ private:
     // items in a list that provides fast index-based access and index-based insertions and removals.
     QList<QAction*> m_actions;
 
-    typedef QHash<QAction*, QList<QKeySequence>> Shortcuts;
+    typedef QHash<QAction*, QList<QKeySequence> > Shortcuts;
     Shortcuts m_shortcuts;
     Shortcuts m_defaultShortcuts;
 

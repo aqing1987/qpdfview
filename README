@@ -44,3 +44,4 @@ sudo apt install libspectre-dev
 sudo apt install libdjvulibre-dev
 sudo apt install libmupdf-dev
 sudo apt install libpoppler-qt5-dev
+sudo apt install libqt5svg5-dev
